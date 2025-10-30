@@ -40,6 +40,19 @@ function enableFields(form){
 		{"campo" : "InfoCompl","atividade" : "0,1,41"},
 		/*{"campo" : "cpCheklist","atividade" : "0,1,41"},
 */		{"campo" : "cpObs","atividade" : "0,1,41"}, 
+
+		// ########## INÍCIO CAMPOS ADICIONADOS ##########
+		{"campo" : "ContratoComPrazo","atividade" : "0,1,41"},
+		{"campo" : "TipoContratoPrazo","atividade" : "0,1,41"},
+		{"campo" : "DataFinalContrato","atividade" : "0,1,41"},
+		{"campo" : "TemAvisoPrevioIndenizado","atividade" : "0,1,41"},
+		{"campo" : "DescontaAvisoPrevio","atividade" : "0,1,41"},
+		{"campo" : "AvisoPrevioMisto","atividade" : "0,1,41"},
+		{"campo" : "DataInicioAvisoTrabalhado","atividade" : "0,1,41"},
+		{"campo" : "DiasAvisoTrabalhado","atividade" : "0,1,41"},
+		{"campo" : "TipoReducaoAviso","atividade" : "0,1,41"},
+		{"campo" : "FormaReducaoAviso","atividade" : "0,1,41"},
+
 		//REABERTURA
 		{"campo" : "cpReaberturaChamado","atividade" : "41"},
 		{"campo" : "cpParecerReabertura","atividade" : "41"},
