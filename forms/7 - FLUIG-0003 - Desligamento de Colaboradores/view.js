@@ -301,6 +301,7 @@ var buscaCentroCusto = function() {
 		$("#TxtNomeCol").val("");
 		$("#txtCodFuncao").val("");
 		$("#CODSITUACAO").val("");
+		$("#SituacaoColaborador").val("");
 		$("#DtLimitFer").val("");
 		$("#txtDtAdm").val("");
 		$("#txtCodSindicato").val("");
@@ -312,10 +313,10 @@ var buscaCentroCusto = function() {
 		$("#FIMPRAZOCONTR").val("");
 		$("#NROFICHAREG").val("");
 		$("#CODRECEBIMENTO").val("");
-		$("#CodBanco").val("");
-		$("#BancoPagto").val("");
+		//$("#CodBanco").val("");
+		//$("#BancoPagto").val("");
 		$("#TipoFunc").val("");
-		$("#PIS").val("");
+		//$("#PIS").val("");
 	}  
 
 	return zoomSecao;
@@ -374,6 +375,7 @@ function ZoomBuscaCol() {
 		$("#TxtNomeCol").val(retorno[1]);
 		$("#txtCodFuncao").val(retorno[5]);
 		$("#CODSITUACAO").val(retorno[6]);
+		$("#SituacaoColaborador").val(retorno[6]);
 		$("#DtLimitFer").val(retorno[11]);
 		$("#txtDtAdm").val(retorno[3]);
 		$("#txtCodSindicato").val(retorno[12]);
@@ -385,10 +387,10 @@ function ZoomBuscaCol() {
 		$("#FIMPRAZOCONTR").val(retorno[17]);
 		$("#NROFICHAREG").val(retorno[18]);
 		$("#CODRECEBIMENTO").val(retorno[19]);
-		$("#CodBanco").val(retorno[20]);
-		$("#BancoPagto").val(retorno[21]);
+		//$("#CodBanco").val(retorno[20]);
+		//$("#BancoPagto").val(retorno[21]);
 		$("#TipoFunc").val(retorno[22]);
-		$("#PIS").val(retorno[23]);
+		//$("#PIS").val(retorno[23]);
 		ESTABILIDADE();
 	}  
 
