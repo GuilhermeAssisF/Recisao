@@ -255,6 +255,44 @@
                      </div>
                   </div>
                </div>
+
+               <div class="row" id="divContratoPrazo">
+                  <div class="col-md-3">
+                     <div class="form-group">
+                        <label>&nbsp;</label>
+                        <div class="checkbox">
+                           <label>
+                              <input type="checkbox" name="ContratoComPrazo" id="ContratoComPrazo">
+                              Contrato com Prazo
+                           </label>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="col-md-5">
+                     <div class="form-group">
+                        <label>Tipo Contrato com Prazo</label>
+                        <select name="TipoContratoPrazo" id="TipoContratoPrazo" class="form-control">
+                           <option value="">Selecione...</option>
+                           <option value="1">Experiência</option>
+                        </select>
+                     </div>
+                  </div>
+                  <div class="col-md-4">
+                     <div class="form-group">
+                        <label>Data Final do Contrato</label>
+                        <div class="input-group">
+                           <input type="text" name="DataFinalContrato" id="DataFinalContrato" class="form-control"
+                              readonly />
+                           <span class="input-group-btn botao" id="addDataFinalContrato">
+                              <button type="button" class="btn btn-info">
+                                 <span class="fluigicon fluigicon-calendar"></span>
+                              </button>
+                           </span>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+
                <input type="hidden" id="TxtChapa" name="TxtChapa">
                <input type="hidden" id="CodPessoa" name="CodPessoa">
                <input type="hidden" id="TxtNomeCol" name="TxtNomeCol">
@@ -361,43 +399,6 @@
 
                </div>
 
-               <div class="row" id="divContratoPrazo">
-                  <div class="col-md-3">
-                     <div class="form-group">
-                        <label>&nbsp;</label>
-                        <div class="checkbox">
-                           <label>
-                              <input type="checkbox" name="ContratoComPrazo" id="ContratoComPrazo">
-                              Contrato com Prazo
-                           </label>
-                        </div>
-                     </div>
-                  </div>
-                  <div class="col-md-5">
-                     <div class="form-group">
-                        <label>Tipo Contrato com Prazo</label>
-                        <select name="TipoContratoPrazo" id="TipoContratoPrazo" class="form-control">
-                           <option value="">Selecione...</option>
-                           <option value="1">Experiência</option>
-                        </select>
-                     </div>
-                  </div>
-                  <div class="col-md-4">
-                     <div class="form-group">
-                        <label>Data Final do Contrato</label>
-                        <div class="input-group">
-                           <input type="text" name="DataFinalContrato" id="DataFinalContrato" class="form-control"
-                              readonly />
-                           <span class="input-group-btn botao" id="addDataFinalContrato">
-                              <button type="button" class="btn btn-info">
-                                 <span class="fluigicon fluigicon-calendar"></span>
-                              </button>
-                           </span>
-                        </div>
-                     </div>
-                  </div>
-               </div>
-
                <div class="row" id="divDetalhesAviso">
                   <div class="col-md-3">
                      <div class="form-group">
@@ -453,31 +454,6 @@
                      <div class="form-group">
                         <label>Dias de Aviso Trabalhado</label>
                         <input type="number" name="DiasAvisoTrabalhado" id="DiasAvisoTrabalhado" class="form-control" />
-                     </div>
-                  </div>
-               </div>
-
-               <div class="row" id="divReducaoAviso">
-                  <div class="col-md-6">
-                     <div class="form-group">
-                        <label>Tipo Redução Aviso</label><br>
-                        <div class="radio-inline">
-                           <label><input type="radio" name="TipoReducaoAviso" value="Dias"> Dias</label>
-                        </div>
-                        <div class="radio-inline">
-                           <label><input type="radio" name="TipoReducaoAviso" value="Jornada"> Jornada</label>
-                        </div>
-                     </div>
-                  </div>
-                  <div class="col-md-6">
-                     <div class="form-group">
-                        <label>Forma Redução Aviso</label><br>
-                        <div class="radio-inline">
-                           <label><input type="radio" name="FormaReducaoAviso" value="Inicio"> Início</label>
-                        </div>
-                        <div class="radio-inline">
-                           <label><input type="radio" name="FormaReducaoAviso" value="Fim"> Fim</label>
-                        </div>
                      </div>
                   </div>
                </div>
