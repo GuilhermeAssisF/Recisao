@@ -99,6 +99,37 @@ $(document).ready(function () {
 
 	}
 
+	// Adicionar dentro do $(document).ready()
+	$(document).on("change", "#cpTipoDesligamentoSelect", function () {
+		var valorSelecionado = $(this).val();
+		var textoSelecionado = $(this).find("option:selected").text();
+
+		if (valorSelecionado == "outros") {
+			// 1. Mostra o campo de zoom
+			$("#divTipoDesligamentoZoom").show();
+
+			// 2. Limpa os campos ocultos, pois o usuário TERÁ que selecionar no zoom
+			$("#CodTpDesl").val("");
+			$("#TipoDesligamento").val("");
+			$("#TpAviso").val(""); // Limpa o tipo de aviso
+
+			// 3. Oculta as opções de aviso
+			$(".Indeniza, .Desconta").hide();
+
+		} else {
+			// 1. Garante que o campo de zoom esteja oculto
+			$("#divTipoDesligamentoZoom").hide();
+
+			// 2. Popula os campos ocultos com o valor do select
+			$("#CodTpDesl").val(valorSelecionado);
+			$("#TipoDesligamento").val(textoSelecionado); // Salva o texto amigável
+
+			// 3. Limpa o campo de aviso e re-executa a lógica de exibição
+			$("#TpAviso").val("");
+			TpAvvsTpDem(valorSelecionado);
+		}
+	});
+
 });
 
 var criaDatepickers = function () {
@@ -251,11 +282,13 @@ function ZoomBuscaTPTDemissao() {
 	];
 
 	ZoomTPTDemissao.Retorno = function (retorno) {
-
 		$("#TipoDesligamento").val(retorno[1]);
 		$("#CodTpDesl").val(retorno[0]);
 		$("#TpAviso").val("");
 		TpAvvsTpDem(retorno[0]);
+
+		// Linha Adicionada: Garante que o select principal permaneça em "outros"
+		$("#cpTipoDesligamentoSelect").val("outros");
 	}
 
 	return ZoomTPTDemissao;

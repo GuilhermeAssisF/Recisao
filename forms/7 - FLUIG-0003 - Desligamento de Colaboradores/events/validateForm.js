@@ -14,7 +14,7 @@ GERAR KIT - 89
 
 */
 
-function validateForm(form){
+function validateForm(form) {
 
       var atividade = getValue("WKNumState");
       var funcao = form.getValue('cpFuncao');
@@ -23,59 +23,59 @@ function validateForm(form){
 
       function validaAprovacao(aprovacao, parecer) {
 
-             if (form.getValue(aprovacao) == 0) {
+            if (form.getValue(aprovacao) == 0) {
 
-                   Errors.push('Aprovação não preenchida');
-             }
-             if (form.getValue(aprovacao) == 2 && form.getValue(parecer) == '') {
+                  Errors.push('Aprovação não preenchida');
+            }
+            if (form.getValue(aprovacao) == 2 && form.getValue(parecer) == '') {
 
-                   Errors.push('Parecer não prenchido');
-             }
+                  Errors.push('Parecer não prenchido');
+            }
       }
       function validaVazio(campo, mensagem) {
 
-             if (form.getValue(campo) == '') {
+            if (form.getValue(campo) == '') {
 
-                   Errors.push(mensagem);
-             }
+                  Errors.push(mensagem);
+            }
       }
       function validaNotSelected(campo, mensagem) {
 
-             if (form.getValue(campo) == '') {
+            if (form.getValue(campo) == '') {
 
-                   Errors.push(mensagem);
-             }
+                  Errors.push(mensagem);
+            }
       }
-      var getDtConvertida = function(campo) {
+      var getDtConvertida = function (campo) {
 
-             var dtArray = String(form.getValue(campo)).split('/');
+            var dtArray = String(form.getValue(campo)).split('/');
 
-             return new Date(dtArray[2], dtArray[1] - 1, dtArray[0]);
+            return new Date(dtArray[2], dtArray[1] - 1, dtArray[0]);
       };
 
       var DataDemissao = form.getValue("DataDemissao");
 
-     
 
-      if(DataDemissao!=""){
-      var d=DataDemissao.substring("0","2");
-      var m=DataDemissao.substring("4","5");
-      var y=DataDemissao.substring("6","10");
 
-      if (m < 10) m = '0' + m;
-      if (d < 10) d = '0' + d;
-      var Demissao = new Date(y+'/'+m+'/'+d);
+      if (DataDemissao != "") {
+            var d = DataDemissao.substring("0", "2");
+            var m = DataDemissao.substring("4", "5");
+            var y = DataDemissao.substring("6", "10");
+
+            if (m < 10) m = '0' + m;
+            if (d < 10) d = '0' + d;
+            var Demissao = new Date(y + '/' + m + '/' + d);
       }
 
       var DataAviso = form.getValue("DataAviso");
-      if(DataAviso!=""){
-      var dA=DataAviso.substring("0","2");
-      var mA=DataAviso.substring("4","5");
-      var yA=DataAviso.substring("6","10");
+      if (DataAviso != "") {
+            var dA = DataAviso.substring("0", "2");
+            var mA = DataAviso.substring("4", "5");
+            var yA = DataAviso.substring("6", "10");
 
-      if (mA < 10) mA = '0' + mA;
-      if (dA < 10) dA = '0' + dA;
-      var Aviso = new Date(yA+'/'+mA+'/'+dA);
+            if (mA < 10) mA = '0' + mA;
+            if (dA < 10) dA = '0' + dA;
+            var Aviso = new Date(yA + '/' + mA + '/' + dA);
       }
 
       validaVazio('Empresa', 'Empresa');
@@ -85,81 +85,92 @@ function validateForm(form){
       validaVazio('CargoCol', 'Cargo');
       validaVazio('MatriculaCod', 'Matrícula');
       validaVazio('Gestor', 'Gestor');
-      validaVazio('TipoDesligamento', 'Tipo de Desligamento');
       validaVazio('MotiDesligamento', 'Motivo de Desligamento');
       validaVazio('TpAviso', 'Tipo de Aviso');
       validaVazio('DataDemissao', 'Data de Demissão');
       validaVazio('EPIEPC', 'Possui ficha EPI/EPC');
       validaVazio('DPCentral', 'Enviou ao DP Central');
+
+      var tipoDesligamentoSelect = form.getValue("cpTipoDesligamentoSelect");
+
+      if (tipoDesligamentoSelect == "") {
+            Errors.push("O campo 'Tipo de Desligamento' é obrigatório.");
+
+      } else if (tipoDesligamentoSelect == "outros") {
+            // Se for "Outros", o campo de texto do zoom (TipoDesligamento) também se torna obrigatório
+            if (form.getValue("TipoDesligamento") == "") {
+                  Errors.push("Você selecionou 'Outros' para o Tipo de Desligamento. Por favor, utilize a busca para selecionar o tipo específico.");
+            }
+      }
+
       //gestor
 
-      if((atividade ==0 || atividade==1 || atividade==41) && (acaoUsuario == "true")){
+      if ((atividade == 0 || atividade == 1 || atividade == 41) && (acaoUsuario == "true")) {
 
-            
 
-             if (form.getValue("TpAviso") !="5" && ((form.getValue("DataAviso")) ) == "")
 
-                Errors.push('Data de Aviso.'); 
+            if (form.getValue("TpAviso") != "5" && ((form.getValue("DataAviso"))) == "")
 
-             if(Demissao!="" && Aviso!=""){
+                  Errors.push('Data de Aviso.');
 
-             if(Demissao<Aviso){
+            if (Demissao != "" && Aviso != "") {
 
-                   Errors.push('A Data de Desligamento não pode ser anterior a Data de Aviso.');
+                  if (Demissao < Aviso) {
 
-             }
+                        Errors.push('A Data de Desligamento não pode ser anterior a Data de Aviso.');
 
-             }
+                  }
+
+            }
 
       }
-             if (atividade == 7  && (acaoUsuario=="true")) { //GESTOR IMEDIATO
+      if (atividade == 7 && (acaoUsuario == "true")) { //GESTOR IMEDIATO
 
-                   validaAprovacao('cpAprovacaoGestor', 'cpParecercol');
+            validaAprovacao('cpAprovacaoGestor', 'cpParecercol');
 
-            
 
-             } else if ( atividade==8 && (acaoUsuario=="true")) { //GESTOR IMEDIATO EM ATRASO
 
-                   validaAprovacao('cpAprovacaoDiretor', 'cpParecerAprovaDiretor');
+      } else if (atividade == 8 && (acaoUsuario == "true")) { //GESTOR IMEDIATO EM ATRASO
 
-            
+            validaAprovacao('cpAprovacaoDiretor', 'cpParecerAprovaDiretor');
 
-             } else if (atividade == 74 && (acaoUsuario=="true")) { //VALIDAR O KIT
 
-                   validaAprovacao('cpAprovacaoRH', 'cpParecerAprovaRH');
 
-             }
+      } else if (atividade == 74 && (acaoUsuario == "true")) { //VALIDAR O KIT
 
-             else if (atividade == 97 && (acaoUsuario=="true")) { //VALIDAR O KIT
+            validaAprovacao('cpAprovacaoRH', 'cpParecerAprovaRH');
 
-                   validaAprovacao('cpAprovacaoKit', 'cpParecerAprovaKit');
+      }
 
-            
+      else if (atividade == 97 && (acaoUsuario == "true")) { //VALIDAR O KIT
 
-             } else if (atividade == 41 && (acaoUsuario=="true")) { //VALIDAR O KIT
+            validaAprovacao('cpAprovacaoKit', 'cpParecerAprovaKit');
 
-                   validaAprovacao('cpReaberturaChamado', 'cpParecerReabertura');
 
-                  
 
-             }
+      } else if (atividade == 41 && (acaoUsuario == "true")) { //VALIDAR O KIT
 
- 
+            validaAprovacao('cpReaberturaChamado', 'cpParecerReabertura');
+
+
+
+      }
+
+
 
       if (Errors.length) {
 
-             throw Errors[0];
+            throw Errors[0];
 
       }
 
- 
 
- 
 
- 
 
- 
+
+
+
+
 
 }
 
- 
