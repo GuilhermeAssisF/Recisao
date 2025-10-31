@@ -1,6 +1,6 @@
 var atividade;
-$(document).ready(function () {
 
+$(document).ready(function () {
 
 	atividade = getWKNumState();
 
@@ -104,16 +104,17 @@ $(document).ready(function () {
 		var valorSelecionado = $(this).val();
 		var textoSelecionado = $(this).find("option:selected").text();
 
+		// 1. Chama a nova função de gerenciamento de visibilidade
+		gerenciarCamposPorTipoDesligamento(valorSelecionado);
+
 		if (valorSelecionado == "outros") {
-			// 1. Mostra o campo de zoom
+			// 2. Mostra o campo de zoom
 			$("#divTipoDesligamentoZoom").show();
 
-			// 2. Limpa os campos ocultos, pois o usuário TERÁ que selecionar no zoom
-			$("#CodTpDesl").val("");
-			$("#TipoDesligamento").val("");
-			$("#TpAviso").val(""); // Limpa o tipo de aviso
+			// 3. Limpa os campos ocultos
+			$("#CodTpDesl, #TipoDesligamento, #TpAviso").val("");
 
-			// 3. Oculta as opções de aviso
+			// 4. Oculta as opções de aviso do zoom (que serão reexibidas pela TpAvvsTpDem)
 			$(".Indeniza, .Desconta").hide();
 
 		} else {
@@ -122,10 +123,10 @@ $(document).ready(function () {
 
 			// 2. Popula os campos ocultos com o valor do select
 			$("#CodTpDesl").val(valorSelecionado);
-			$("#TipoDesligamento").val(textoSelecionado); // Salva o texto amigável
+			$("#TipoDesligamento").val(textoSelecionado);
 
-			// 3. Limpa o campo de aviso e re-executa a lógica de exibição
-			$("#TpAviso").val("");
+			// 3. Re-executa a lógica de exibição do Tipo de Aviso (para o select de aviso)
+			// Isso é importante caso você queira controlar o <select> "TpAviso" baseado no tipo "2" ou "V"
 			TpAvvsTpDem(valorSelecionado);
 		}
 	});
@@ -199,6 +200,23 @@ var criaDatepickers = function () {
 		minDate: 0 // Impede selecionar data passada
 	});
 
+	$("#DataInicioAvisoIndenizado").datepicker({
+		showOn: "button",
+		showButtonPanel: "true",
+		changeMonth: "true",
+		changeYear: "true",
+		showOtherMonths: "true",
+		selectOtherMonths: "true",
+		onSelect: function () {
+			$(document).trigger('dataSelecionada');
+		},
+		minDate: 0 // Impede selecionar data passada
+	});
+
+	// Esta função de clique para o botão do novo datepicker
+	$("#addDataInicioAvisoIndenizado").click(function () {
+		$("#DataInicioAvisoIndenizado").datepicker('show');
+	});
 
 }
 
@@ -516,4 +534,65 @@ var ESTABILIDADE = function () {
 	//return DIAS;
 	return 0;
 
+}
+
+/**
+ * Gerencia a exibição e os valores dos campos de aviso 
+ * com base no Tipo de Desligamento selecionado.
+ */
+function gerenciarCamposPorTipoDesligamento(tipo) {
+	console.log("Gerenciando campos para o tipo: " + tipo);
+
+	// --- 1. Reseta/Oculta todos os campos de aviso ---
+
+	// Mostra todos os checkboxes de controle
+	$("#divTemAvisoIndenizado, #divDescontaAviso, #divAvisoMisto").show();
+	// Oculta os divs de campos (data/dias)
+	$("#divAvisoIndenizadoCampos, #divAvisoTrabalhado").hide();
+
+	// Limpa os valores
+	$("#TemAvisoPrevioIndenizado, #DescontaAvisoPrevio, #AvisoPrevioMisto")
+		.prop("checked", false)
+		.prop("disabled", false);
+
+	$("#DataInicioAvisoIndenizado, #DiasAvisoIndenizado, #DataInicioAvisoTrabalhado, #DiasAvisoTrabalhado").val("");
+
+	// Desabilita os botões de data
+	$("#addDataInicioAvisoIndenizado button, #addDataInicioAvisoTrabalhado button").prop("disabled", true);
+
+
+	// --- 2. Aplica as regras específicas ---
+
+	if (tipo == "2" || tipo == "V") { // Demissão sem justa causa (2) ou Comum Acordo (V)
+		console.log("Regra 2 ou V: Aviso Indenizado");
+
+		// Exibe os campos de Data e Dias do Aviso Indenizado
+		$("#divAvisoIndenizadoCampos").show();
+
+		// Oculta os campos de Aviso Trabalhado
+		$("#divAvisoTrabalhado").hide();
+
+		// Oculta as flags "Desconta" e "Misto"
+		$("#divDescontaAviso, #divAvisoMisto").hide();
+
+		// Marca e desabilita "Tem Aviso Prévio Indenizado"
+		$("#TemAvisoPrevioIndenizado").prop("checked", true).prop("disabled", true);
+
+		// Define o default de 30 dias e habilita campos
+		$("#DiasAvisoIndenizado").val("30");
+		$("#DataInicioAvisoIndenizado").prop("readonly", false); // Necessário para o datepicker
+		$("#DiasAvisoIndenizado").prop("readonly", false);
+		$("#addDataInicioAvisoIndenizado button").prop("disabled", false); // Habilita o botão do calendário
+
+	} else if (tipo == "outros") {
+		// Se for "Outros", a lógica do zoom (TpAvvsTpDem) vai tratar
+		// Apenas garantimos que o select de 'Tipo de Aviso' esteja limpo
+		$("#TpAviso").val("");
+
+	} else {
+		// Aqui irão as outras regras (Justa Causa, Pedido de Demissão, etc.)
+		// Por enquanto, apenas garantimos que os campos de data/dias fiquem ocultos
+		$("#divAvisoIndenizadoCampos").hide();
+		$("#divAvisoTrabalhado").hide();
+	}
 }

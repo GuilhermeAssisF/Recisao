@@ -107,20 +107,23 @@ function validateForm(form) {
 
       if ((atividade == 0 || atividade == 1 || atividade == 41) && (acaoUsuario == "true")) {
 
-
-
             if (form.getValue("TpAviso") != "5" && ((form.getValue("DataAviso"))) == "")
 
                   Errors.push('Data de Aviso.');
 
             if (Demissao != "" && Aviso != "") {
-
                   if (Demissao < Aviso) {
 
                         Errors.push('A Data de Desligamento não pode ser anterior a Data de Aviso.');
-
                   }
+            }
 
+            var tipoDesligamentoSelect = form.getValue("cpTipoDesligamentoSelect");
+
+            // Valida os novos campos de Aviso Indenizado
+            if (tipoDesligamentoSelect == "2" || tipoDesligamentoSelect == "V") {
+                  validaVazio('DataInicioAvisoIndenizado', 'O campo Data de Início do Aviso Indenizado é obrigatório.');
+                  validaVazio('DiasAvisoIndenizado', 'O campo Dias de Aviso Indenizado é obrigatório.');
             }
 
       }

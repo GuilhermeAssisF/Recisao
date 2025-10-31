@@ -344,7 +344,7 @@
                         </div>
                      </div>
                   </div>
-                  
+
                   <div class="col-md-6">
                      <div class="form-group">
                         <input type="hidden" id="CodMtDesl" name="CodMtDesl">
@@ -418,7 +418,7 @@
                </div>
 
                <div class="row" id="divDetalhesAviso">
-                  <div class="col-md-3">
+                  <div class="col-md-3" id="divTemAvisoIndenizado">
                      <div class="form-group">
                         <label>&nbsp;</label>
                         <div class="checkbox">
@@ -429,7 +429,7 @@
                         </div>
                      </div>
                   </div>
-                  <div class="col-md-3">
+                  <div class="col-md-3" id="divDescontaAviso">
                      <div class="form-group">
                         <label>&nbsp;</label>
                         <div class="checkbox">
@@ -440,7 +440,7 @@
                         </div>
                      </div>
                   </div>
-                  <div class="col-md-3">
+                  <div class="col-md-3" id="divAvisoMisto">
                      <div class="form-group">
                         <label>&nbsp;</label>
                         <div class="checkbox">
@@ -449,6 +449,29 @@
                               Aviso Prévio Misto
                            </label>
                         </div>
+                     </div>
+                  </div>
+               </div>
+
+               <div class="row" id="divAvisoIndenizadoCampos" style="display: none;">
+                  <div class="col-md-4">
+                     <div class="form-group">
+                        <label>Data de Início do Aviso Indenizado</label>
+                        <div class="input-group">
+                           <input type="text" name="DataInicioAvisoIndenizado" id="DataInicioAvisoIndenizado"
+                              class="form-control" readonly />
+                           <span class="input-group-btn botao" id="addDataInicioAvisoIndenizado">
+                              <button type="button" class="btn btn-info">
+                                 <span class="fluigicon fluigicon-calendar"></span>
+                              </button>
+                           </span>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="col-md-4">
+                     <div class="form-group">
+                        <label>Dias de Aviso Indenizado</label>
+                        <input type="number" name="DiasAvisoIndenizado" id="DiasAvisoIndenizado" class="form-control" />
                      </div>
                   </div>
                </div>

@@ -53,6 +53,8 @@ function enableFields(form){
 		{"campo" : "TipoReducaoAviso","atividade" : "0,1,41"},
 		{"campo" : "FormaReducaoAviso","atividade" : "0,1,41"},
 		{"campo" : "cpTipoDesligamentoSelect","atividade" : "0,1,41"},
+		{"campo" : "DataInicioAvisoIndenizado","atividade" : "0,1,41"},
+		{"campo" : "DiasAvisoIndenizado","atividade" : "0,1,41"},
 		//REABERTURA
 		{"campo" : "cpReaberturaChamado","atividade" : "41"},
 		{"campo" : "cpParecerReabertura","atividade" : "41"},
