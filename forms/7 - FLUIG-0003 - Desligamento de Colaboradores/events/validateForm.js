@@ -126,6 +126,15 @@ function validateForm(form) {
                   validaVazio('DiasAvisoIndenizado', 'O campo Dias de Aviso Indenizado é obrigatório.');
             }
 
+            // Valida Pedido de Demissão (4)
+            if (tipoDesligamentoSelect == "4") {
+                  // Verifica se o checkbox "DescontaAvisoPrevio" está marcado
+                  if (form.getValue("DescontaAvisoPrevio") == "on") {
+                        // Valida o campo "DiasAvisoTrabalhado" que está no HTML original
+                        validaVazio('DiasAvisoTrabalhado', 'O campo "Dias de Aviso Trabalhado" é obrigatório pois "Desconta Aviso Prévio" está marcado.');
+                  }
+            }
+
       }
       if (atividade == 7 && (acaoUsuario == "true")) { //GESTOR IMEDIATO
 

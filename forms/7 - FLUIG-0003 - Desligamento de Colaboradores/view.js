@@ -131,6 +131,23 @@ $(document).ready(function () {
 		}
 	});
 
+	$(document).on("change", "#DescontaAvisoPrevio", function () {
+		var tipoDesligamento = $("#cpTipoDesligamentoSelect").val();
+
+		// Só aplica a regra de ocultar/mostrar se for "Pedido de Demissão"
+		if (tipoDesligamento == "4") {
+			if ($(this).is(":checked")) {
+				$("#divAvisoTrabalhado").show();
+				$("#addDataInicioAvisoTrabalhado button").prop("disabled", false);
+				$("#DiasAvisoTrabalhado").prop("readonly", false);
+			} else {
+				$("#divAvisoTrabalhado").hide();
+				$("#DataInicioAvisoTrabalhado, #DiasAvisoTrabalhado").val("");
+				$("#addDataInicioAvisoTrabalhado button").prop("disabled", true);
+			}
+		}
+	});
+
 });
 
 var criaDatepickers = function () {
@@ -584,6 +601,41 @@ function gerenciarCamposPorTipoDesligamento(tipo) {
 		$("#DiasAvisoIndenizado").prop("readonly", false);
 		$("#addDataInicioAvisoIndenizado button").prop("disabled", false); // Habilita o botão do calendário
 
+	} else if (tipo == "4") { // Demissão por Pedido de Demissão (4)	
+		console.log("Regra 4: Pedido de Demissão");
+
+		// Oculta as flags "Indenizado" e "Misto"
+		$("#divTemAvisoIndenizado, #divAvisoMisto").hide();
+
+		// Oculta os campos de Aviso Indenizado
+		$("#divAvisoIndenizadoCampos").hide();
+
+		// Mostra o DIV de Aviso Trabalhado (que contém os dias)
+		$("#divAvisoTrabalhado").show();
+
+		// Marca por default "Desconta Aviso Previo" (mas permite desmarcar)
+		$("#DescontaAvisoPrevio").prop("checked", true).prop("disabled", false);
+
+		// Habilita os campos de data e dias do Aviso Trabalhado
+		$("#DataInicioAvisoTrabalhado").prop("readonly", false);
+		$("#DiasAvisoTrabalhado").prop("readonly", false);
+		$("#addDataInicioAvisoTrabalhado button").prop("disabled", false); // Habilita o botão do calendário
+
+	} else if (tipo == "1" || tipo == "8" || tipo == "T") { // Justa Causa (1), Falecimento (8), Termino de Contrato (T)
+		console.log("Regra 1, 8 ou T: Sem Aviso");
+
+		// Oculta todos os checkboxes e campos de data/dias customizados
+		$("#divTemAvisoIndenizado, #divDescontaAviso, #divAvisoMisto").hide();
+		$("#divAvisoIndenizadoCampos, #divAvisoTrabalhado").hide();
+
+		// Mostra os campos de aviso originais
+		$("#divTpAviso, #divDataAviso").show();
+
+		// Define "Não se Aplica" (código 5) e desabilita os campos
+		$("#TpAviso").val("5").prop("disabled", true);
+		$("#DataAviso").val("").prop("disabled", true); // Limpa e desabilita
+		$("#addDataAviso button").prop("disabled", true); // Desabilita o botão do calendário
+		
 	} else if (tipo == "outros") {
 		// Se for "Outros", a lógica do zoom (TpAvvsTpDem) vai tratar
 		// Apenas garantimos que o select de 'Tipo de Aviso' esteja limpo
