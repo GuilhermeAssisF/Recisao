@@ -421,8 +421,8 @@ var buscaCentroCusto = function () {
 
 		// ########## INÍCIO LIMPEZA NOVOS CAMPOS ##########
 		$("#ContratoComPrazo").prop('checked', false);
-		$("#TipoContratoPrazo").val("");
-		$("#DataFinalContrato").val("");
+		$("#TipoContratoPrazo").val(retorno[24]); // <-- (Recebe o Tipo de Contrato)
+		$("#DataFinalContrato").val(retorno[17]); // <-- (Recebe a Data Fim)
 		$("#TemAvisoPrevioIndenizado").prop('checked', false);
 		$("#DescontaAvisoPrevio").prop('checked', false);
 		$("#AvisoPrevioMisto").prop('checked', false);
@@ -448,30 +448,31 @@ function ZoomBuscaCol() {
 
 	ZoomCol.Colunas = [
 
-		{ "title": "CHAPA", "name": "CHAPA" },
+		{ "title": "CHAPA", "name": "CHAPA" },//0
 		{ "title": "NOME", "name": "NOME" },
-		{ "title": "CARGO", "name": "CARGO" },
+		{ "title": "CARGO", "name": "CARGO" },//2
 		{ "title": "DATAADMISSAO", "name": "DATAADMISSAO", display: false },
-		{ "title": "UF_COLIGADA", "name": "UF_COLIGADA", display: false },
+		{ "title": "UF_COLIGADA", "name": "UF_COLIGADA", display: false },//4
 		{ "title": "CODFUNCAO", "name": "CODFUNCAO", display: false },
-		{ "title": "CODSITUACAO", "name": "CODSITUACAO", display: false },
+		{ "title": "CODSITUACAO", "name": "CODSITUACAO", display: false },//6
 		{ "title": "CODSECAO", "name": "CODSECAO", display: false },
-		{ "title": "FIMPRAZOCONTR", "name": "FIMPRAZOCONTR", display: false },
+		{ "title": "FIMPRAZOCONTR", "name": "FIMPRAZOCONTR", display: false },//8
 		{ "title": "CODPESSOA", "name": "CODPESSOA", display: false },
-		{ "title": "SALARIO", "name": "SALARIO", display: false },
+		{ "title": "SALARIO", "name": "SALARIO", display: false },//10
 		{ "title": "DATALIMITEFER", "name": "DATALIMITEFER", display: false },
-		{ "title": "CODSINDICATO", "name": "CODSINDICATO", display: false },
+		{ "title": "CODSINDICATO", "name": "CODSINDICATO", display: false },//12
 		{ "title": "MEMBROCIPA", "name": "MEMBROCIPA", display: false },
-		{ "title": "CODTIPO", "name": "CODTIPO", display: false },
+		{ "title": "CODTIPO", "name": "CODTIPO", display: false },//14
 		{ "title": "CODCATEGORIA", "name": "CODCATEGORIA", display: false },
-		{ "title": "TEMPRAZOCONTR", "name": "TEMPRAZOCONTR", display: false },
+		{ "title": "TEMPRAZOCONTR", "name": "TEMPRAZOCONTR", display: false },//16
 		{ "title": "FIMPRAZOCONTR", "name": "FIMPRAZOCONTR", display: false },
-		{ "title": "NROFICHAREG", "name": "NROFICHAREG", display: false },
+		{ "title": "NROFICHAREG", "name": "NROFICHAREG", display: false },//18
 		{ "title": "CODRECEBIMENTO", "name": "CODRECEBIMENTO", display: false },
-		{ "title": "CODBANCO", "name": "CODBANCO", display: false },
+		{ "title": "CODBANCO", "name": "CODBANCO", display: false },//20
 		{ "title": "BANCO", "name": "BANCO", display: false },
-		{ "title": "TIPOFUNCIONARIO", "name": "TIPOFUNCIONARIO", display: false },
-		{ "title": "PISPASEP", "name": "PISPASEP", display: false }
+		{ "title": "TIPOFUNCIONARIO", "name": "TIPOFUNCIONARIO", display: false },//22 
+		{ "title": "PISPASEP", "name": "PISPASEP", display: false },
+		{ "title": "TIPOCONTRATOPRAZO", "name": "TIPOCONTRATOPRAZO", display: false } //24
 
 	];
 
@@ -504,7 +505,24 @@ function ZoomBuscaCol() {
 		//$("#BancoPagto").val(retorno[21]);
 		$("#TipoFunc").val(retorno[22]);
 		//$("#PIS").val(retorno[23]);
+		$("#txtTipoContratoPrazo").val(retorno[24]);
 		ESTABILIDADE();
+
+		var tipoContrato = retorno[24];  // Pega o "TIPOCONTRATOPRAZO"
+		var dataFimContrato = retorno[17]; // Pega o "FIMPRAZOCONTR"
+
+		// Popula os campos VISÍVEIS que alteramos no HTML
+		$("#TipoContratoPrazo").val(tipoContrato); 
+		$("#DataFinalContrato").val(dataFimContrato);
+
+		// Marca o checkbox se o tipo de contrato não for vazio
+		if (tipoContrato != null && tipoContrato != "") {
+			$("#ContratoComPrazo").prop('checked', true);
+		} else {
+			$("#ContratoComPrazo").prop('checked', false);
+		}
+
+		$("#TemAvisoPrevioIndenizado").prop('checked', false);
 	}
 
 	return ZoomCol;
@@ -537,11 +555,11 @@ var ESTABILIDADE = function () {
 	try {
 		var tabela = DatasetFactory.getDataset("DS_FLUIG_0038", fields, null, null);
 
-		document.getElementById("Estabilidade").value = "NÃO POSSUI ESTABILIADE";
+		document.getElementById("Estabilidade").value = "NÃO POSSUI ESTABILIDADE";
 
 		for (var i = 0; i < tabela.values.length; i++) {
 			ESTABILIDADE = tabela.values[i].ESTABILIDADE.toString();
-			document.getElementById("Estabilidade").value = "POSSUI ESTABILIADE";
+			document.getElementById("Estabilidade").value = "POSSUI ESTABILIDADE";
 		}
 	}
 

@@ -43,7 +43,6 @@ function enableFields(form){
 
 		// ########## INÍCIO CAMPOS ADICIONADOS ##########
 		{"campo" : "ContratoComPrazo","atividade" : "0,1,41"},
-		{"campo" : "TipoContratoPrazo","atividade" : "0,1,41"},
 		{"campo" : "DataFinalContrato","atividade" : "0,1,41"},
 		{"campo" : "TemAvisoPrevioIndenizado","atividade" : "0,1,41"},
 		{"campo" : "DescontaAvisoPrevio","atividade" : "0,1,41"},
