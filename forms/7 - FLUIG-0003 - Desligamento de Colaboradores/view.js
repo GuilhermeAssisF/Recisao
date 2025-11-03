@@ -497,8 +497,13 @@ function ZoomBuscaCol() {
 		$("#CodTipoFunc").val(retorno[14]);
 		$("#CodCategoria").val(retorno[15]);
 		$("#txtSalOrigem").val(retorno[15]);
-		$("#TEMPRAZOCONTR").val(retorno[16]);
-		$("#FIMPRAZOCONTR").val(retorno[17]);
+
+		// Campos ocultos (como antes)
+		var temPrazoFlag = retorno[16]; // O valor 1 ou 0
+		var dataFimContrato = retorno[17];
+		$("#TEMPRAZOCONTR").val(temPrazoFlag);
+		$("#FIMPRAZOCONTR").val(dataFimContrato);
+
 		$("#NROFICHAREG").val(retorno[18]);
 		$("#CODRECEBIMENTO").val(retorno[19]);
 		//$("#CodBanco").val(retorno[20]);
@@ -506,23 +511,33 @@ function ZoomBuscaCol() {
 		$("#TipoFunc").val(retorno[22]);
 		//$("#PIS").val(retorno[23]);
 		$("#txtTipoContratoPrazo").val(retorno[24]);
-		ESTABILIDADE();
 
-		var tipoContrato = retorno[24];  // Pega o "TIPOCONTRATOPRAZO"
-		var dataFimContrato = retorno[17]; // Pega o "FIMPRAZOCONTR"
+		// Novo campo de texto do contrato
+		var tipoContratoTexto = retorno[24]; // O texto "Contrato de Experiência"
 
-		// Popula os campos VISÍVEIS que alteramos no HTML
-		$("#TipoContratoPrazo").val(tipoContrato); 
-		$("#DataFinalContrato").val(dataFimContrato);
+		// ########## INÍCIO DA NOVA LÓGICA DE PREENCHIMENTO ##########
 
-		// Marca o checkbox se o tipo de contrato não for vazio
-		if (tipoContrato != null && tipoContrato != "") {
+		// 1. Popula o campo de TEXTO (readonly) com a coluna 24
+		$("#TipoContratoPrazo").val(tipoContratoTexto);
+
+		// 2. Popula a DATA FIM (readonly) com a coluna 17
+		$("#DataFinalContrato").val( formatarDataISO(dataFimContrato) );
+
+		// 3. Controla o CHECKBOX com a coluna 16
+		// (Ajuste a condição se o valor de "sim" for diferente de "S")
+		if (temPrazoFlag != null && temPrazoFlag.toUpperCase() == "1") {
 			$("#ContratoComPrazo").prop('checked', true);
 		} else {
 			$("#ContratoComPrazo").prop('checked', false);
 		}
 
+		// 4. TRAVA o checkbox, pois ele é automático
+		$("#ContratoComPrazo").prop('disabled', true);
+
 		$("#TemAvisoPrevioIndenizado").prop('checked', false);
+		// ########## FIM DA NOVA LÓGICA ##########
+
+		ESTABILIDADE();
 	}
 
 	return ZoomCol;
@@ -673,4 +688,34 @@ function gerenciarCamposPorTipoDesligamento(tipo) {
 		// Oculta tudo
 		$("#divCamposAvisoOriginais, #divCamposAvisoCheckboxes, #divAvisoIndenizadoCampos, #divAvisoTrabalhado").hide();
 	}
+}
+
+/**
+ * Formata uma data do formato ISO (YYYY-MM-DDTHH:MM:SS) para DD/MM/YYYY.
+ * @param {string} dataISO A string de data no formato ISO.
+ * @returns {string} A data formatada como DD/MM/YYYY ou uma string vazia.
+ */
+function formatarDataISO(dataISO) {
+    if (!dataISO || dataISO == "") {
+        return "";
+    }
+    
+    try {
+        // 1. Pega apenas a parte da data (YYYY-MM-DD)
+        var dataParte = dataISO.split('T')[0];
+        
+        // 2. Quebra a data em partes
+        var partes = dataParte.split('-');
+        
+        // 3. Monta no formato DD/MM/YYYY
+        // partes[0] = YYYY, partes[1] = MM, partes[2] = DD
+        if (partes.length === 3) {
+             return partes[2] + '/' + partes[1] + '/' + partes[0];
+        }
+        
+        return dataISO; // Retorna original se não estiver no formato esperado
+    } catch (e) {
+        console.error("Erro ao formatar data: ", dataISO, e);
+        return dataISO; // Retorna original em caso de erro
+    }
 }
