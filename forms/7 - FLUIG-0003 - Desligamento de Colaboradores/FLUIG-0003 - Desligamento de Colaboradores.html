@@ -153,19 +153,14 @@
          <!-- reabertura -->
 
          <!-- DADOS DA SOLICITACAO -->
-         <div class="panel panel-default">
+         <div class="panel panel-default" id="pnColaborador">
             <div class="panel-heading">
                <h3 class="panel-title">
-                  <span class="fluigicon  fluigicon-pointer-right fluigicon-sm"></span>
-                  &nbsp;Dados da Solicita&ccedil;&atilde;o
+                  <span class="fluigicon fluigicon-user fluigicon-sm"></span>
+                  &nbsp;Dados do Colaborador
                </h3>
             </div>
             <div class="panel-body container">
-               <!-- DADOS DO COLABORADOR -->
-               <h4>
-                  <span class="fluigicon  fluigicon-pointer-right fluigicon-sm"></span>Dados
-                  do Colaborador
-               </h4>
                <div class="row">
                   <div class="col-md-6">
                      <input type="hidden" name="CodColigada" id="CodColigada" />
@@ -174,14 +169,13 @@
                         <div class="input-group">
                            <input type="text" name="Empresa" id="Empresa" class="form-control" readonly />
                            <div class="input-group-btn btnZoom" id="addEmpresa">
-                              <button class="btn btn-info">
+                              <button class="btn btn-info" type="button">
                                  <span class="fluigicon fluigicon-search"></span>
                               </button>
                            </div>
                         </div>
                      </div>
                   </div>
-
                   <input type="hidden" name="CodCentroCC" id="CodCentroCC" />
                   <div class="col-md-6">
                      <div class="form-group">
@@ -199,7 +193,7 @@
                            <input type="text" name="NomeColaborador" id="NomeColaborador" class="form-control"
                               readonly />
                            <div class="input-group-btn btnZoom" id="addNomCol">
-                              <button class="btn btn-info">
+                              <button class="btn btn-info" type="button">
                                  <span class="fluigicon fluigicon-search"></span>
                               </button>
                            </div>
@@ -262,7 +256,7 @@
                         <label>&nbsp;</label>
                         <div class="checkbox">
                            <label>
-                              <input type="checkbox" name="ContratoComPrazo" id="ContratoComPrazo" disabled>
+                              <input type="checkbox" name="ContratoComPrazo" id="ContratoComPrazo">
                               Contrato com Prazo
                            </label>
                         </div>
@@ -308,9 +302,25 @@
                <input type="hidden" id="NROFICHAREG" name="NROFICHAREG">
                <input type="hidden" id="CODRECEBIMENTO" name="CODRECEBIMENTO">
                <input type="hidden" id="CODSITUACAO" name="CODSITUACAO">
-               <input type="hidden" id="txtTipoContratoPrazo" name="txtTipoContratoPrazo">
-
+            </div>
+         </div>
+         <div class="panel panel-default" id="pnRescisao">
+            <div class="panel-heading">
+               <h3 class="panel-title">
+                  <span class="fluigicon fluigicon-file-doc fluigicon-sm"></span>
+                  &nbsp;Rescisão
+               </h3>
+            </div>
+            <div class="panel-body container">
+               <div class="row" id="divAvisoEstabilidade" style="display:none;">
+                  <div class="col-md-12">
+                     <div class="alert alert-warning" role="alert">
+                        <strong>Atenção:</strong> Favor verificar a estabilidade do empregado.
+                     </div>
+                  </div>
+               </div>
                <div class="row">
+
                   <div class="col-md-6">
                      <div class="form-group">
                         <label class="labelField" for="cpTipoDesligamentoSelect">Tipo de Desligamento <span
@@ -327,25 +337,8 @@
                         </select>
                      </div>
                   </div>
-                  <div class="col-md-6">
-                     <div class="form-group">
-                        <input type="hidden" id="CodMtDesl" name="CodMtDesl">
-                        <label>Motivo de Desligamento</label>
-                        <div class="input-group">
-                           <input type="text" name="MotiDesligamento" id="MotiDesligamento" class="form-control"
-                              readonly />
-                           <div class="input-group-btn btnZoom" id="addMtDesl">
-                              <button class="btn btn-info">
-                                 <span class="fluigicon fluigicon-search"></span>
-                              </button>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
-               </div>
 
-               <div class="row" id="divTipoDesligamentoZoom" style="display:none;">
-                  <div class="col-md-12">
+                  <div class="col-md-6" id="divTipoDesligamentoZoom" style="display:none;">
                      <div class="form-group">
                         <input type="hidden" id="CodTpDesl" name="CodTpDesl">
                         <label>Outros Tipos de Desligamento <span class="CampoObrigatorio"> *</span></label>
@@ -353,7 +346,7 @@
                            <input type="text" name="TipoDesligamento" id="TipoDesligamento" class="form-control"
                               readonly />
                            <div class="input-group-btn btnZoom" id="addTpDesl">
-                              <button class="btn btn-info">
+                              <button class="btn btn-info" type="button">
                                  <span class="fluigicon fluigicon-search"></span>
                               </button>
                            </div>
@@ -361,9 +354,25 @@
                      </div>
                   </div>
                </div>
-
                <div class="row">
-                  <div class="col-md-6">
+
+                  <div class="col-md-4">
+                     <div class="form-group">
+                        <input type="hidden" id="CodMtDesl" name="CodMtDesl">
+                        <label>Motivo de Desligamento</label>
+                        <div class="input-group">
+                           <input type="text" name="MotiDesligamento" id="MotiDesligamento" class="form-control"
+                              readonly />
+                           <div class="input-group-btn btnZoom" id="addMtDesl">
+                              <button class="btn btn-info" type="button">
+                                 <span class="fluigicon fluigicon-search"></span>
+                              </button>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+
+                  <div class="col-md-4">
                      <div class="form-group">
                         <label>Data de Desligamento</label>
                         <div class="input-group">
@@ -376,7 +385,8 @@
                         </div>
                      </div>
                   </div>
-                  <div class="col-md-6">
+
+                  <div class="col-md-4">
                      <div class="form-group">
                         <label>Data de Pagamento</label>
                         <div class="input-group">
@@ -390,128 +400,131 @@
                      </div>
                   </div>
                </div>
+            </div>
+         </div>
+         <div class="panel panel-default" id="pnAvisoPrevio">
+            <div class="panel-heading">
+               <h3 class="panel-title">
+                  <span class="fluigicon fluigicon-time fluigicon-sm"></span>
+                  &nbsp;Aviso Prévio
+               </h3>
+            </div>
+            <div class="panel-body container">
 
-               <div class="row" id="blocoCamposAviso">
-
-                  <div id="divCamposAvisoOriginais" style="display: none;">
-                     <div class="col-md-6" id="divTpAviso">
-                        <div class="form-group ">
-                           <label>Tipo de Aviso</label>
-                           <select class="form-control" name="TpAviso" id="TpAviso">
-                              <option value="">Selecione</option>
-                              <option value="1">Aviso Trabalhado</option>
-                              <option class="Indeniza" value="2">Aviso Indenizado</option>
-                              <option class="Desconta" value="3">Desconta Aviso</option>
-                              <option value="4">Aviso Prévio Misto</option>
-                              <option value="5">Não se Aplica</option>
-                           </select>
+               <div id="divCamposAvisoOriginais" style="display: none;">
+                  <div class="col-md-6" id="divTpAviso">
+                     <div class="form-group ">
+                        <label>Tipo de Aviso</label>
+                        <select class="form-control" name="TpAviso" id="TpAviso">
+                           <option value="">Selecione</option>
+                           <option value="1">Aviso Trabalhado</option>
+                           <option class="Indeniza" value="2">Aviso Indenizado</option>
+                           <option class="Desconta" value="3">Desconta Aviso</option>
+                           <option value="4">Aviso Prévio Misto</option>
+                           <option value="5">Não se Aplica</option>
+                        </select>
+                     </div>
+                  </div>
+                  <div class="col-md-6" id="divDataAviso">
+                     <div class="form-group">
+                        <label>Data do Aviso</label>
+                        <div class="input-group">
+                           <input type="text" name="DataAviso" id="DataAviso" class="form-control" readonly />
+                           <span class="input-group-btn botao" id="addDataAviso">
+                              <button type="button" class="btn btn-info">
+                                 <span class="fluigicon fluigicon-calendar"></span>
+                              </button>
+                           </span>
                         </div>
                      </div>
-                     <div class="col-md-6" id="divDataAviso">
-                        <div class="form-group">
-                           <label>Data do Aviso</label>
-                           <div class="input-group">
-                              <input type="text" name="DataAviso" id="DataAviso" class="form-control" readonly />
-                              <span class="input-group-btn botao" id="addDataAviso">
-                                 <button type="button" class="btn btn-info">
-                                    <span class="fluigicon fluigicon-calendar"></span>
-                                 </button>
-                              </span>
-                           </div>
+                  </div>
+               </div>
+               <div class="row" id="linhaAvisoDinamica" style="display: none;">
+
+                  <div class="col-md-3">
+
+                     <div class="form-group" id="divTemAvisoIndenizado" style="display: none;">
+                        <label>&nbsp;</label>
+                        <div class="checkbox">
+                           <label>
+                              <input type="checkbox" name="TemAvisoPrevioIndenizado" id="TemAvisoPrevioIndenizado">
+                              Tem Aviso Prévio Indenizado
+                           </label>
+                        </div>
+                     </div>
+
+                     <div class="form-group" id="divDescontaAviso" style="display: none;">
+                        <label>&nbsp;</label>
+                        <div class="checkbox">
+                           <label>
+                              <input type="checkbox" name="DescontaAvisoPrevio" id="DescontaAvisoPrevio">
+                              Desconta Aviso Previo
+                           </label>
+                        </div>
+                     </div>
+
+                     <div class="form-group" id="divAvisoMisto" style="display: none;">
+                        <label>&nbsp;</label>
+                        <div class="checkbox">
+                           <label>
+                              <input type="checkbox" name="AvisoPrevioMisto" id="AvisoPrevioMisto">
+                              Aviso Prévio Misto
+                           </label>
                         </div>
                      </div>
                   </div>
 
-                  <div id="divCamposAvisoCheckboxes" style="display: none;">
-                     <div class="col-md-4" id="divTemAvisoIndenizado">
-                        <div class="form-group">
-                           <label>&nbsp;</label>
-                           <div class="checkbox">
-                              <label>
-                                 <input type="checkbox" name="TemAvisoPrevioIndenizado" id="TemAvisoPrevioIndenizado">
-                                 Tem Aviso Prévio Indenizado
-                              </label>
-                           </div>
+                  <div class="col-md-3">
+
+                     <div class="form-group" id="divDataInicioAvisoIndenizado" style="display: none;">
+                        <label>Data de Início do Aviso Indenizado</label>
+                        <div class="input-group">
+                           <input type="text" name="DataInicioAvisoIndenizado" id="DataInicioAvisoIndenizado"
+                              class="form-control" readonly />
+                           <span class="input-group-btn botao" id="addDataInicioAvisoIndenizado">
+                              <button type="button" class="btn btn-info">
+                                 <span class="fluigicon fluigicon-calendar"></span>
+                              </button>
+                           </span>
                         </div>
                      </div>
-                     <div class="col-md-4" id="divDescontaAviso">
-                        <div class="form-group">
-                           <label>&nbsp;</label>
-                           <div class="checkbox">
-                              <label>
-                                 <input type="checkbox" name="DescontaAvisoPrevio" id="DescontaAvisoPrevio">
-                                 Desconta Aviso Previo
-                              </label>
-                           </div>
-                        </div>
-                     </div>
-                     <div class="col-md-4" id="divAvisoMisto">
-                        <div class="form-group">
-                           <label>&nbsp;</label>
-                           <div class="checkbox">
-                              <label>
-                                 <input type="checkbox" name="AvisoPrevioMisto" id="AvisoPrevioMisto">
-                                 Aviso Prévio Misto
-                              </label>
-                           </div>
+
+                     <div class="form-group" id="divDataInicioAvisoTrabalhado" style="display: none;">
+                        <label>Data Início Aviso Trabalhado</label>
+                        <div class="input-group">
+                           <input type="text" name="DataInicioAvisoTrabalhado" id="DataInicioAvisoTrabalhado"
+                              class="form-control" readonly />
+                           <span class="input-group-btn botao" id="addDataInicioAvisoTrabalhado">
+                              <button type="button" class="btn btn-info">
+                                 <span class="fluigicon fluigicon-calendar"></span>
+                              </button>
+                           </span>
                         </div>
                      </div>
                   </div>
 
-                  <div class="col-md-12" id="divAvisoIndenizadoCampos" style="display: none;">
-                     <div class="row">
-                        <div class="col-md-6">
-                           <div class="form-group">
-                              <label>Data de Início do Aviso Indenizado</label>
-                              <div class="input-group">
-                                 <input type="text" name="DataInicioAvisoIndenizado" id="DataInicioAvisoIndenizado"
-                                    class="form-control" readonly />
-                                 <span class="input-group-btn botao" id="addDataInicioAvisoIndenizado">
-                                    <button type="button" class="btn btn-info">
-                                       <span class="fluigicon fluigicon-calendar"></span>
-                                    </button>
-                                 </span>
-                              </div>
-                           </div>
-                        </div>
-                        <div class="col-md-6">
-                           <div class="form-group">
-                              <label>Dias de Aviso Indenizado</label>
-                              <input type="number" name="DiasAvisoIndenizado" id="DiasAvisoIndenizado"
-                                 class="form-control" />
-                           </div>
-                        </div>
+                  <div class="col-md-3">
+
+                     <div class="form-group" id="divDiasAvisoIndenizado" style="display: none;">
+                        <label>Dias de Aviso Indenizado</label>
+                        <input type="number" name="DiasAvisoIndenizado" id="DiasAvisoIndenizado" class="form-control" />
+                     </div>
+
+                     <div class="form-group" id="divDiasAvisoTrabalhado" style="display: none;">
+                        <label>Dias de Aviso Trabalhado</label>
+                        <input type="number" name="DiasAvisoTrabalhado" id="DiasAvisoTrabalhado" class="form-control" />
                      </div>
                   </div>
 
-                  <div class="col-md-12" id="divAvisoTrabalhado" style="display: none;">
-                     <div class="row">
-                        <div class="col-md-6">
-                           <div class="form-group">
-                              <label>Data Início Aviso Trabalhado</label>
-                              <div class="input-group">
-                                 <input type="text" name="DataInicioAvisoTrabalhado" id="DataInicioAvisoTrabalhado"
-                                    class="form-control" readonly />
-                                 <span class="input-group-btn botao" id="addDataInicioAvisoTrabalhado">
-                                    <button type="button" class="btn btn-info">
-                                       <span class="fluigicon fluigicon-calendar"></span>
-                                    </button>
-                                 </span>
-                              </div>
-                           </div>
-                        </div>
-                        <div class="col-md-6">
-                           <div class="form-group">
-                              <label>Dias de Aviso Trabalhado</label>
-                              <input type="number" name="DiasAvisoTrabalhado" id="DiasAvisoTrabalhado"
-                                 class="form-control" />
-                           </div>
-                        </div>
+                  <div class="col-md-3">
+                     <div class="form-group" id="divAvisoProporcional" style="display: none;">
+                        <label>Dias de Aviso Proporcional</label>
+                        <input type="number" name="DiasAvisoProporcional" id="DiasAvisoProporcional"
+                           class="form-control" />
                      </div>
                   </div>
 
                </div>
-
                <div class="row">
                   <div class="col-md-12">
                      <div class="form-group">
@@ -544,17 +557,7 @@
                      </div>
                   </div>
                </div>
-               <!--  
-                       <div class="row">
-                                 <div class="col-md-12">
-                                    <div class="form-group">
-                                       <label class="labelField">Check List Demissional</label>
-                                       <textarea class="form-control" rows="3"
-                                          name="cpCheklist" id="cpCheklist"
-                                         ></textarea>
-                                    </div>
-                                 </div>
-                              </div> -->
+
                <div class="row">
                   <div class="col-md-12">
                      <div class="form-group">
@@ -563,6 +566,7 @@
                      </div>
                   </div>
                </div>
+
                <h4>
                   <span class="fluigicon  fluigicon-plus"></span>
                   &nbsp;Chek List Demissional
@@ -575,7 +579,7 @@
                   <input type="checkbox" id="Cbk2" name="Ckb2" />
                   <label>Informar o funcionário sobre a data e horário de acerto/homologação</label>
                </div>
-               <div class="col-md-12">
+               <div class_class="col-md-12">
                   <input type="checkbox" id="Ckb3" name="Ckb3" />
                   <label>Providenciar a Notificação de Desligamento ou a Carta de Pedido de Demissão</label>
                </div>
@@ -600,8 +604,6 @@
                   <input type="checkbox" id="Ckb8" name="Ckb8" />
                   <label>Enviar ao RH Niterói</label>
                </div>
-
-
             </div>
          </div>
 

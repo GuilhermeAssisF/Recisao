@@ -394,6 +394,10 @@ var buscaCentroCusto = function () {
 		$("#txtCodSecaoOri").val(retorno[1]);
 
 		$("#MatriculaCod").val("");
+
+		$("#Estabilidade").val("");
+		$("#divAvisoEstabilidade").hide();
+
 		$("#TxtChapa").val("");
 		$("#NomeColaborador").val("");
 		$("#CargoCol").val("");
@@ -521,7 +525,7 @@ function ZoomBuscaCol() {
 		$("#TipoContratoPrazo").val(tipoContratoTexto);
 
 		// 2. Popula a DATA FIM (readonly) com a coluna 17
-		$("#DataFinalContrato").val( formatarDataISO(dataFimContrato) );
+		$("#DataFinalContrato").val(formatarDataISO(dataFimContrato));
 
 		// 3. Controla o CHECKBOX com a coluna 16
 		// (Ajuste a condição se o valor de "sim" for diferente de "S")
@@ -565,25 +569,31 @@ var ESTABILIDADE = function () {
 	var MATRICULA = document.getElementById("MatriculaCod").value;
 	var fields = new Array(COLIGADA, MATRICULA);
 
-	var ESTABILIDADE = 0;
-
 	try {
 		var tabela = DatasetFactory.getDataset("DS_FLUIG_0038", fields, null, null);
 
-		document.getElementById("Estabilidade").value = "NÃO POSSUI ESTABILIDADE";
-
-		for (var i = 0; i < tabela.values.length; i++) {
-			ESTABILIDADE = tabela.values[i].ESTABILIDADE.toString();
+		if (tabela.values.length > 0) {
+			// Se o dataset retornar qualquer registro, o colaborador POSSUI estabilidade
 			document.getElementById("Estabilidade").value = "POSSUI ESTABILIDADE";
+
+			// --- LÓGICA ADICIONADA ---
+			$("#divAvisoEstabilidade").show(); // Mostra o aviso
+
+		} else {
+			// Se o dataset não retornar nada, NÃO POSSUI estabilidade
+			document.getElementById("Estabilidade").value = "NÃO POSSUI ESTABILIDADE";
+
+			// --- LÓGICA ADICIONADA ---
+			$("#divAvisoEstabilidade").hide(); // Esconde o aviso
 		}
 	}
-
 	catch (erro) {
+		// Em caso de erro, assume que não possui e esconde o aviso
+		document.getElementById("Estabilidade").value = "NÃO POSSUI ESTABILIDADE";
+		$("#divAvisoEstabilidade").hide();
 	}
 
-	//return DIAS;
-	return 0;
-
+	return 0; // Mantém o retorno original da sua função
 }
 
 /**
@@ -594,21 +604,24 @@ function gerenciarCamposPorTipoDesligamento(tipo) {
 	console.log("Gerenciando campos para o tipo: " + tipo);
 
 	// --- 1. Reseta/Oculta todos os blocos de aviso ---
-	// Oculta todos os 4 blocos filhos do container mestre
-	$("#divCamposAvisoOriginais, #divCamposAvisoCheckboxes, #divAvisoIndenizadoCampos, #divAvisoTrabalhado").hide();
+	$("#divCamposAvisoOriginais").hide(); // Oculta o bloco de aviso original (para 'Outros')
+	$("#linhaAvisoDinamica").hide();      // Oculta a nova linha dinâmica inteira
 
-	// Mostra/Oculta os checkboxes individuais (eles estão dentro do divCamposAvisoCheckboxes)
-	$("#divTemAvisoIndenizado, #divDescontaAviso, #divAvisoMisto").show(); // Mostra por padrão (o pai esconde)
+	// Oculta todos os componentes individuais dentro da linha dinâmica
+	$("#divTemAvisoIndenizado, #divDescontaAviso, #divAvisoMisto").hide();
+	$("#divDataInicioAvisoIndenizado, #divDataInicioAvisoTrabalhado").hide();
+	$("#divDiasAvisoIndenizado, #divDiasAvisoTrabalhado").hide();
+	$("#divAvisoProporcional").hide();
 
 	// Limpa valores e estado dos checkboxes
 	$("#TemAvisoPrevioIndenizado, #DescontaAvisoPrevio, #AvisoMisto")
 		.prop("checked", false)
 		.prop("disabled", false);
 
-	// Limpa valores dos campos de data/dias customizados
-	$("#DataInicioAvisoIndenizado, #DiasAvisoIndenizado, #DataInicioAvisoTrabalhado, #DiasAvisoTrabalhado").val("");
+	// Limpa valores dos campos de data/dias
+	$("#DataInicioAvisoIndenizado, #DiasAvisoIndenizado, #DataInicioAvisoTrabalhado, #DiasAvisoTrabalhado, #DiasAvisoProporcional").val("");
 
-	// Limpa valores dos campos de aviso originais e HABILITA (caso 'Outros' seja selecionado)
+	// Limpa valores dos campos de aviso originais e HABILITA
 	$("#TpAviso, #DataAviso").val("").prop("disabled", false);
 	$("#addDataAviso button").prop("disabled", false);
 
@@ -621,49 +634,51 @@ function gerenciarCamposPorTipoDesligamento(tipo) {
 	if (tipo == "2" || tipo == "V") { // Demissão sem justa causa (2) ou Comum Acordo (V)
 		console.log("Regra 2 ou V: Aviso Indenizado");
 
-		$("#TpAviso").val("2"); // Seta o valor para a integração (Aviso Indenizado)
+		$("#TpAviso").val("2"); // Seta valor oculto para integração
 
-		// Mostra os wrappers relevantes
-		$("#divCamposAvisoCheckboxes, #divAvisoIndenizadoCampos").show();
+		// Mostra a linha dinâmica
+		$("#linhaAvisoDinamica").show();
 
-		// Oculta as flags "Desconta" e "Misto"
-		$("#divDescontaAviso, #divAvisoMisto").hide();
-		$("#divTemAvisoIndenizado").show(); // Garante que este esteja visível
+		// Mostra os 4 campos corretos na ordem
+		$("#divTemAvisoIndenizado").show();
+		$("#divDataInicioAvisoIndenizado").show();
+		$("#divDiasAvisoIndenizado").show();
+		$("#divAvisoProporcional").show();
 
-		// Marca e desabilita "Tem Aviso Prévio Indenizado"
+		// Marca e desabilita o checkbox
 		$("#TemAvisoPrevioIndenizado").prop("checked", true).prop("disabled", true);
 
 		// Define o default de 30 dias e habilita campos
 		$("#DiasAvisoIndenizado").val("30");
-		$("#DataInicioAvisoIndenizado").prop("readonly", false);
-		$("#DiasAvisoIndenizado").prop("readonly", false);
-		$("#addDataInicioAvisoIndenizado button").prop("disabled", false);
+		$("#DataInicioAvisoIndenizado, #DiasAvisoIndenizado, #DiasAvisoProporcional").prop("readonly", false);
+		$("#addDataInicioAvisoIndenizado button").prop("disabled", false); // Habilita o botão do calendário
 
 	} else if (tipo == "4") { // Pedido de Demissão (4)
 		console.log("Regra 4: Pedido de Demissão");
 
-		$("#TpAviso").val("3"); // Seta o valor para a integração (Desconta Aviso)
+		$("#TpAviso").val("3"); // Seta valor oculto para integração
 
-		// Mostra os wrappers relevantes
-		$("#divCamposAvisoCheckboxes, #divAvisoTrabalhado").show();
+		// Mostra a linha dinâmica
+		$("#linhaAvisoDinamica").show();
 
-		// Oculta as flags "Indenizado" e "Misto"
-		$("#divTemAvisoIndenizado, #divAvisoMisto").hide();
-		$("#divDescontaAviso").show(); // Garante que este esteja visível
+		// Mostra os 4 campos corretos na ordem
+		$("#divDescontaAviso").show();
+		$("#divDataInicioAvisoTrabalhado").show();
+		$("#divDiasAvisoTrabalhado").show();
+		$("#divAvisoProporcional").show();
 
 		// Marca por default "Desconta Aviso Previo" (mas permite desmarcar)
 		$("#DescontaAvisoPrevio").prop("checked", true).prop("disabled", false);
 
-		// Habilita os campos de data e dias do Aviso Trabalhado
-		$("#DataInicioAvisoTrabalhado").prop("readonly", false);
-		$("#DiasAvisoTrabalhado").prop("readonly", false);
-		$("#addDataInicioAvisoTrabalhado button").prop("disabled", false);
+		// Habilita os campos de data e dias
+		$("#DataInicioAvisoTrabalhado, #DiasAvisoTrabalhado, #DiasAvisoProporcional").prop("readonly", false);
+		$("#addDataInicioAvisoTrabalhado button").prop("disabled", false); // Habilita o botão do calendário
 
 	} else if (tipo == "1" || tipo == "8" || tipo == "T") { // Justa Causa (1), Falecimento (8), Termino de Contrato (T)
 		console.log("Regra 1, 8 ou T: Sem Aviso");
 
-		// Oculta blocos customizados
-		$("#divCamposAvisoCheckboxes, #divAvisoIndenizadoCampos, #divAvisoTrabalhado").hide();
+		// Oculta a linha dinâmica (já está oculta pelo reset)
+		// $("#linhaAvisoDinamica").hide();
 
 		// Mostra o bloco de aviso original
 		$("#divCamposAvisoOriginais").show();
@@ -671,13 +686,13 @@ function gerenciarCamposPorTipoDesligamento(tipo) {
 		// Define "Não se Aplica" (código 5) e desabilita os campos
 		$("#TpAviso").val("5").prop("disabled", true);
 		$("#DataAviso").val("").prop("disabled", true);
-		$("#addDataAviso button").prop("disabled", true);
+		$("#addDataAviso button").prop("disabled", true); // Desabilita o botão do calendário
 
 	} else if (tipo == "outros") {
 		console.log("Regra: Outros");
 
-		// Oculta blocos customizados
-		$("#divCamposAvisoCheckboxes, #divAvisoIndenizadoCampos, #divAvisoTrabalhado").hide();
+		// Oculta a linha dinâmica (já está oculta pelo reset)
+		// $("#linhaAvisoDinamica").hide();
 
 		// Mostra os campos de aviso originais para o zoom
 		$("#divCamposAvisoOriginais").show();
@@ -685,8 +700,9 @@ function gerenciarCamposPorTipoDesligamento(tipo) {
 
 	} else {
 		// Estado Padrão (Nenhum tipo selecionado)
-		// Oculta tudo
-		$("#divCamposAvisoOriginais, #divCamposAvisoCheckboxes, #divAvisoIndenizadoCampos, #divAvisoTrabalhado").hide();
+		// Oculta tudo (já está oculto pelo reset)
+		// $("#divCamposAvisoOriginais").hide();
+		// $("#linhaAvisoDinamica").hide();
 	}
 }
 
@@ -696,26 +712,72 @@ function gerenciarCamposPorTipoDesligamento(tipo) {
  * @returns {string} A data formatada como DD/MM/YYYY ou uma string vazia.
  */
 function formatarDataISO(dataISO) {
-    if (!dataISO || dataISO == "") {
-        return "";
+	if (!dataISO || dataISO == "") {
+		return "";
+	}
+
+	try {
+		// 1. Pega apenas a parte da data (YYYY-MM-DD)
+		var dataParte = dataISO.split('T')[0];
+
+		// 2. Quebra a data em partes
+		var partes = dataParte.split('-');
+
+		// 3. Monta no formato DD/MM/YYYY
+		// partes[0] = YYYY, partes[1] = MM, partes[2] = DD
+		if (partes.length === 3) {
+			return partes[2] + '/' + partes[1] + '/' + partes[0];
+		}
+
+		return dataISO; // Retorna original se não estiver no formato esperado
+	} catch (e) {
+		console.error("Erro ao formatar data: ", dataISO, e);
+		return dataISO; // Retorna original em caso de erro
+	}
+}
+
+/**
+ * Busca e preenche automaticamente o Motivo de Desligamento (DS_FLUIG_0032)
+ * com base no código do motivo.
+ */
+function preencheMotivoAutomatico(codigoMotivo) {
+    // Se o código for nulo (como no caso "Outros"),
+    // limpa os campos e habilita o botão de zoom.
+    if (codigoMotivo == null || codigoMotivo == "") {
+        $("#CodMtDesl").val("");
+        $("#MotiDesligamento").val("");
+        $("#addMtDesl").prop("disabled", false); // Habilita o botão
+        return;
     }
-    
+
     try {
-        // 1. Pega apenas a parte da data (YYYY-MM-DD)
-        var dataParte = dataISO.split('T')[0];
+        var constraints = new Array();
+        // O dataset 'DS_FLUIG_0032' espera o código na coluna 'CODIGO'
+        constraints.push(DatasetFactory.createConstraint("CODIGO", codigoMotivo, codigoMotivo, ConstraintType.MUST));
         
-        // 2. Quebra a data em partes
-        var partes = dataParte.split('-');
-        
-        // 3. Monta no formato DD/MM/YYYY
-        // partes[0] = YYYY, partes[1] = MM, partes[2] = DD
-        if (partes.length === 3) {
-             return partes[2] + '/' + partes[1] + '/' + partes[0];
+        var dataset = DatasetFactory.getDataset("DS_FLUIG_0032", null, constraints, null);
+
+        if (dataset != null && dataset.values.length > 0) {
+            // Pega a descrição (assumindo que a coluna se chama 'DESCRICAO')
+            var descricao = dataset.values[0].DESCRICAO; 
+
+            // Preenche os campos
+            $("#CodMtDesl").val(codigoMotivo);
+            $("#MotiDesligamento").val(descricao);
+
+            // Desabilita o botão de zoom, pois o preenchimento foi automático
+            $("#addMtDesl").prop("disabled", true);
+        } else {
+            // Se não encontrar (ex: código '4' e no dataset é '04'), limpa e habilita
+            console.warn("Não foi possível encontrar a descrição para o Motivo de Desligamento com código: " + codigoMotivo);
+            $("#CodMtDesl").val("");
+            $("#MotiDesligamento").val("Erro ao buscar. Selecione manualmente.");
+            $("#addMtDesl").prop("disabled", false);
         }
-        
-        return dataISO; // Retorna original se não estiver no formato esperado
     } catch (e) {
-        console.error("Erro ao formatar data: ", dataISO, e);
-        return dataISO; // Retorna original em caso de erro
+        console.error("Erro ao buscar motivo automático: " + e);
+        $("#CodMtDesl").val("");
+        $("#MotiDesligamento").val("Erro no dataset. Selecione manualmente.");
+        $("#addMtDesl").prop("disabled", false);
     }
 }
