@@ -86,7 +86,6 @@ function validateForm(form) {
       validaVazio('MatriculaCod', 'Matrícula');
       validaVazio('Gestor', 'Gestor');
       validaVazio('MotiDesligamento', 'Motivo de Desligamento');
-      validaVazio('TpAviso', 'Tipo de Aviso');
       validaVazio('DataDemissao', 'Data de Demissão');
       validaVazio('EPIEPC', 'Possui ficha EPI/EPC');
       validaVazio('DPCentral', 'Enviou ao DP Central');
@@ -107,10 +106,7 @@ function validateForm(form) {
 
       if ((atividade == 0 || atividade == 1 || atividade == 41) && (acaoUsuario == "true")) {
 
-            if (form.getValue("TpAviso") != "5" && ((form.getValue("DataAviso"))) == "")
-
-                  Errors.push('Data de Aviso.');
-
+            // Valida se a Data de Desligamento é anterior à Data de Aviso
             if (Demissao != "" && Aviso != "") {
                   if (Demissao < Aviso) {
 
@@ -119,6 +115,17 @@ function validateForm(form) {
             }
 
             var tipoDesligamentoSelect = form.getValue("cpTipoDesligamentoSelect");
+
+            // Valida o 'Tipo de Aviso' e 'Data de Aviso' originais APENAS se 'Outros' for selecionado
+            if (tipoDesligamentoSelect == "outros") {
+
+                  validaVazio('TpAviso', 'O campo "Tipo de Aviso" é obrigatório quando "Outros" é selecionado.');
+
+                  if (form.getValue("TpAviso") != "5" && form.getValue("TpAviso") != "") {
+                        validaVazio('DataAviso', 'O campo "Data do Aviso" é obrigatório para este Tipo de Aviso.');
+                  }
+
+            }
 
             // Valida os novos campos de Aviso Indenizado
             if (tipoDesligamentoSelect == "2" || tipoDesligamentoSelect == "V") {
