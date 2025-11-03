@@ -770,11 +770,6 @@ function formatarDataISO(dataISO) {
 	}
 }
 
-/**
- * Busca e preenche automaticamente o Motivo de Desligamento (DS_FLUIG_0032)
- * com base no código do motivo.
- * (Versão corrigida 3: Acessando colunas por nome de forma segura)
- */
 function preencheMotivoAutomatico(codigoMotivo) {
     
     // 1. Se o código for nulo (como no caso "Outros" ou "Selecione..."),
@@ -798,20 +793,16 @@ function preencheMotivoAutomatico(codigoMotivo) {
         var descricao = "";
         var encontrado = false;
         
-        // Cria a versão com padding (ex: "05") manualmente
-        var codigoPad = (codigoMotivo.length === 1) ? "0" + codigoMotivo : codigoMotivo;
-
         for (var i = 0; i < dataset.values.length; i++) {
             var row = dataset.values[i];
             
-            // --- NOVA TÉCNICA DE LEITURA ---
-            // Tenta ler a coluna "CODIGO" (padrão Fluig/JS)
-            // Isso funciona mesmo que a coluna no dataset seja "codigo", "Codigo", etc.
-            var codigoDataset = String(row["COCLIENTE"]).trim(); 
+            // --- CORREÇÃO APLICADA ---
+            // 1. Corrigido para "CODCLIENTE"
+            // 2. Convertido para String para garantir a comparação
+            var codigoDataset = String(row["CODCLIENTE"]).trim(); 
             
-            // Compara o código do dataset com AMBAS as versões (ex: "5" ou "05")
-            if (codigoDataset == codigoMotivo || codigoDataset == codigoPad) {
-                // Lê a descrição usando a mesma técnica
+            // 3. Lógica de "codigoPad" removida. A comparação agora é exata.
+            if (codigoDataset == codigoMotivo) {
                 descricao = row["DESCRICAO"]; 
                 encontrado = true;
                 break; // Para o loop assim que encontrar
