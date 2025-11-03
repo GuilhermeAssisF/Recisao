@@ -773,45 +773,67 @@ function formatarDataISO(dataISO) {
 /**
  * Busca e preenche automaticamente o Motivo de Desligamento (DS_FLUIG_0032)
  * com base no código do motivo.
+ * (Versão corrigida 3: Acessando colunas por nome de forma segura)
  */
 function preencheMotivoAutomatico(codigoMotivo) {
-	// Se o código for nulo (como no caso "Outros"),
-	// limpa os campos e habilita o botão de zoom.
-	if (codigoMotivo == null || codigoMotivo == "") {
-		$("#CodMtDesl").val("");
-		$("#MotiDesligamento").val("");
-		$("#addMtDesl").prop("disabled", false); // Habilita o botão
-		return;
-	}
+    
+    // 1. Se o código for nulo (como no caso "Outros" ou "Selecione..."),
+    // limpa os campos e habilita o botão de zoom.
+    if (codigoMotivo == null || codigoMotivo == "") {
+        $("#CodMtDesl").val("");
+        $("#MotiDesligamento").val("");
+        $("#addMtDesl").prop("disabled", false); // Habilita o botão
+        return;
+    }
 
-	try {
-		var constraints = new Array();
-		// O dataset 'DS_FLUIG_0032' espera o código na coluna 'CODIGO'
-		constraints.push(DatasetFactory.createConstraint("CODIGO", codigoMotivo, codigoMotivo, ConstraintType.MUST));
+    try {
+        // 2. Busca o dataset INTEIRO, sem filtros.
+        var dataset = DatasetFactory.getDataset("DS_FLUIG_0032", null, null, null);
 
-		var dataset = DatasetFactory.getDataset("DS_FLUIG_0032", null, constraints, null);
+        if (dataset == null || dataset.values.length == 0) {
+            throw new Error("O dataset DS_FLUIG_0032 está vazio ou não foi encontrado.");
+        }
 
-		if (dataset != null && dataset.values.length > 0) {
-			// Pega a descrição (assumindo que a coluna se chama 'DESCRICAO')
-			var descricao = dataset.values[0].DESCRICAO;
+        // 3. Filtra o dataset manualmente em JavaScript
+        var descricao = "";
+        var encontrado = false;
+        
+        // Cria a versão com padding (ex: "05") manualmente
+        var codigoPad = (codigoMotivo.length === 1) ? "0" + codigoMotivo : codigoMotivo;
 
-			// Preenche os campos
-			$("#CodMtDesl").val(codigoMotivo);
-			$("#MotiDesligamento").val(descricao);
+        for (var i = 0; i < dataset.values.length; i++) {
+            var row = dataset.values[i];
+            
+            // --- NOVA TÉCNICA DE LEITURA ---
+            // Tenta ler a coluna "CODIGO" (padrão Fluig/JS)
+            // Isso funciona mesmo que a coluna no dataset seja "codigo", "Codigo", etc.
+            var codigoDataset = String(row["COCLIENTE"]).trim(); 
+            
+            // Compara o código do dataset com AMBAS as versões (ex: "5" ou "05")
+            if (codigoDataset == codigoMotivo || codigoDataset == codigoPad) {
+                // Lê a descrição usando a mesma técnica
+                descricao = row["DESCRICAO"]; 
+                encontrado = true;
+                break; // Para o loop assim que encontrar
+            }
+        }
 
-			// Desabilita o botão de zoom, pois o preenchimento foi automático
-			$("#addMtDesl").prop("disabled", true);
-		} else {
-			// Se não encontrar (ex: código '4' e no dataset é '04'), limpa e habilita
-			console.warn("Não foi possível encontrar a descrição para o Motivo de Desligamento com código: " + codigoMotivo);
-			$("#CodMtDesl").val("");
-			$("#MotiDesligamento").val("Erro ao buscar. Selecione manualmente.");
-			$("#addMtDesl").prop("disabled", false);
-		}
-	} catch (e) {
-		console.error("Erro ao buscar motivo automático: " + e);
-		$("#CodMtDesl").val("");
-		$("#MotiDesligamento").val("Erro no dataset. Selecione manualmente.");
-		$("#addMtDesl").prop("disabled", false);
-	}
+        if (encontrado) {
+            // 4. Preenche os campos se encontrou
+            $("#CodMtDesl").val(codigoMotivo); 
+            $("#MotiDesligamento").val(descricao);
+            $("#addMtDesl").prop("disabled", true); // Desabilita o botão
+        } else {
+            // 5. Se não encontrou no loop, avisa o usuário
+            console.warn("Não foi possível encontrar a descrição para o Motivo de Desligamento com código: " + codigoMotivo);
+            $("#CodMtDesl").val("");
+            $("#MotiDesligamento").val("Código não encontrado. Selecione manualmente.");
+            $("#addMtDesl").prop("disabled", false);
+        }
+    } catch (e) {
+        console.error("Erro ao buscar motivo automático: " + e);
+        $("#CodMtDesl").val("");
+        $("#MotiDesligamento").val("Erro no dataset. Selecione manualmente.");
+        $("#addMtDesl").prop("disabled", false);
+    }
 }
