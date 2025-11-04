@@ -171,13 +171,64 @@ $(document).ready(function () {
 		// Só aplica a regra de ocultar/mostrar se for "Pedido de Demissão"
 		if (tipoDesligamento == "4") {
 			if ($(this).is(":checked")) {
-				$("#divAvisoTrabalhado").show();
-				$("#addDataInicioAvisoTrabalhado button").prop("disabled", false);
-				$("#DiasAvisoTrabalhado").prop("readonly", false);
+				// Se marcado, define 30 dias e permite edição
+				$("#DiasAvisoIndenizado").val("30").prop("readonly", false);
 			} else {
-				$("#divAvisoTrabalhado").hide();
-				$("#DataInicioAvisoTrabalhado, #DiasAvisoTrabalhado").val("");
+				// Se desmarcado, define 0 e trava o campo
+				$("#DiasAvisoIndenizado").val("0").prop("readonly", true);
+			}
+		}
+	});
+
+	// Listener para o checkbox "Tem Aviso Prévio Indenizado"
+	$(document).on("change", "#TemAvisoPrevioIndenizado", function () {
+		var tipoDesligamento = $("#cpTipoDesligamentoSelect").val();
+
+		// Aplica a regra apenas para "Demissão sem justa causa" ou "Comum Acordo"
+		if (tipoDesligamento == "2" || tipoDesligamento == "V") {
+
+			if ($(this).is(":checked")) {
+				// MODO INDENIZADO
+				$("#divDataInicioAvisoIndenizado").show();
+				$("#divDiasAvisoIndenizado").show();
+				$("#divAvisoProporcional").show(); // Garante que o proporcional apareça
+
+				$("#divDataInicioAvisoTrabalhado").hide();
+				$("#divDiasAvisoTrabalhado").hide();
+
+				// Habilita/Desabilita botões e campos
+				$("#DataInicioAvisoIndenizado, #DiasAvisoIndenizado").prop("readonly", false);
+				$("#addDataInicioAvisoIndenizado button").prop("disabled", false);
+				$("#DataInicioAvisoTrabalhado, #DiasAvisoTrabalhado").prop("readonly", true);
 				$("#addDataInicioAvisoTrabalhado button").prop("disabled", true);
+
+				// Limpa campos do outro modo
+				$("#DataInicioAvisoTrabalhado, #DiasAvisoTrabalhado").val("");
+				$("#DiasAvisoIndenizado").val("30"); // Volta o default
+
+				// Seta valor oculto para integração (2 = Indenizado)
+				$("#TpAviso").val("2");
+
+			} else {
+				// MODO TRABALHADO
+				$("#divDataInicioAvisoIndenizado").hide();
+				$("#divDiasAvisoIndenizado").hide();
+
+				$("#divDataInicioAvisoTrabalhado").show();
+				$("#divDiasAvisoTrabalhado").show();
+				$("#divAvisoProporcional").show(); // Garante que o proporcional apareça
+
+				// Habilita/Desabilita botões e campos
+				$("#DataInicioAvisoIndenizado, #DiasAvisoIndenizado").prop("readonly", true);
+				$("#addDataInicioAvisoIndenizado button").prop("disabled", true);
+				$("#DataInicioAvisoTrabalhado, #DiasAvisoTrabalhado").prop("readonly", false);
+				$("#addDataInicioAvisoTrabalhado button").prop("disabled", false);
+
+				// Limpa campos do outro modo
+				$("#DataInicioAvisoIndenizado, #DiasAvisoIndenizado").val("");
+
+				// Seta valor oculto para integração (1 = Trabalhado)
+				$("#TpAviso").val("1");
 			}
 		}
 	});
@@ -637,6 +688,11 @@ var ESTABILIDADE = function () {
 function gerenciarCamposPorTipoDesligamento(tipo) {
 	console.log("Gerenciando campos para o tipo: " + tipo);
 
+	// Garante que os campos estejam em suas colunas originais
+	$("#colAviso2, #colAviso3, #colAviso4").show(); // Garante que colunas ocultas reapareçam
+	$("#divDiasAvisoIndenizado").appendTo("#colAviso3");
+	$("#divAvisoProporcional").appendTo("#colAviso4");
+
 	// --- 1. Reseta/Oculta todos os blocos de aviso ---
 	$("#divCamposAvisoOriginais").hide(); // Oculta o bloco de aviso original (para 'Outros')
 	$("#linhaAvisoDinamica").hide();      // Oculta a nova linha dinâmica inteira
@@ -666,47 +722,72 @@ function gerenciarCamposPorTipoDesligamento(tipo) {
 	// --- 2. Aplica as regras específicas ---
 
 	if (tipo == "2" || tipo == "V") { // Demissão sem justa causa (2) ou Comum Acordo (V)
-		console.log("Regra 2 ou V: Aviso Indenizado");
+		console.log("Regra 2 ou V: Aviso Indenizado (Inicial)");
 
-		$("#TpAviso").val("2"); // Seta valor oculto para integração
+		$("#TpAviso").val("2"); // Seta valor oculto para integração (Indenizado)
 
 		// Mostra a linha dinâmica
 		$("#linhaAvisoDinamica").show();
 
-		// Mostra os 4 campos corretos na ordem
+		// Mostra os campos de AVISO INDENIZADO por padrão
 		$("#divTemAvisoIndenizado").show();
 		$("#divDataInicioAvisoIndenizado").show();
 		$("#divDiasAvisoIndenizado").show();
 		$("#divAvisoProporcional").show();
 
-		// Marca e desabilita o checkbox
-		$("#TemAvisoPrevioIndenizado").prop("checked", true).prop("disabled", true);
+		// OCULTA os campos de AVISO TRABALHADO
+		$("#divDataInicioAvisoTrabalhado").hide();
+		$("#divDiasAvisoTrabalhado").hide();
+
+		// --- ALTERAÇÃO PRINCIPAL ---
+		// Marca o checkbox, mas agora permite a edição
+		$("#TemAvisoPrevioIndenizado").prop("checked", true).prop("disabled", false);
+		// --- FIM DA ALTERAÇÃO ---
 
 		// Define o default de 30 dias e habilita campos
 		$("#DiasAvisoIndenizado").val("30");
-		$("#DataInicioAvisoIndenizado, #DiasAvisoIndenizado, #DiasAvisoProporcional").prop("readonly", false);
+		$("#DataInicioAvisoIndenizado, #DiasAvisoIndenizado").prop("readonly", false);
+		$("#DiasAvisoProporcional").prop("readonly", true); // Mantém somente leitura
 		$("#addDataInicioAvisoIndenizado button").prop("disabled", false); // Habilita o botão do calendário
 
 	} else if (tipo == "4") { // Pedido de Demissão (4)
 		console.log("Regra 4: Pedido de Demissão");
+
+		// --- INÍCIO DA ALTERAÇÃO DE LAYOUT ---
+		// Move os campos para as colunas corretas para esta visão
+		$("#divDiasAvisoIndenizado").appendTo("#colAviso2"); // Move Dias Indenizado para Col 2
+		$("#divAvisoProporcional").appendTo("#colAviso3"); // Move Dias Proporcional para Col 3
+		$("#colAviso4").hide(); // Oculta a Coluna 4 (agora vazia)
+		// --- FIM DA ALTERAÇÃO DE LAYOUT ---
 
 		$("#TpAviso").val("3"); // Seta valor oculto para integração
 
 		// Mostra a linha dinâmica
 		$("#linhaAvisoDinamica").show();
 
-		// Mostra os 4 campos corretos na ordem
+		// Mostra os campos corretos para "Pedido de Demissão"
 		$("#divDescontaAviso").show();
-		$("#divDataInicioAvisoTrabalhado").show();
-		$("#divDiasAvisoTrabalhado").show();
-		$("#divAvisoProporcional").show();
+		$("#divDiasAvisoIndenizado").show();       // <-- ESTA LINHA EXIBE O CAMPO
+		$("#divAvisoProporcional").show();         // EXIBE "Dias de Aviso Proporcional" (agora na Col 3)
+
+		// Oculta os campos que não serão usados
+		$("#divDataInicioAvisoIndenizado").hide();
+		$("#divDataInicioAvisoTrabalhado").hide();
+		$("#divDiasAvisoTrabalhado").hide();
+		$("#divAvisoMisto").hide();
+		$("#divTemAvisoIndenizado").hide();
 
 		// Marca por default "Desconta Aviso Previo" (mas permite desmarcar)
 		$("#DescontaAvisoPrevio").prop("checked", true).prop("disabled", false);
 
-		// Habilita os campos de data e dias
-		$("#DataInicioAvisoTrabalhado, #DiasAvisoTrabalhado, #DiasAvisoProporcional").prop("readonly", false);
-		$("#addDataInicioAvisoTrabalhado button").prop("disabled", false); // Habilita o botão do calendário
+		// Define o default de 30 dias e permite edição
+		$("#DiasAvisoIndenizado").val("30").prop("readonly", false);
+
+		// Garante que o proporcional seja somente leitura (da sua solicitação anterior)
+		$("#DiasAvisoProporcional").prop("readonly", true);
+
+		// Limpa campos que não são mais usados nesta regra
+		$("#DataInicioAvisoTrabalhado, #DiasAvisoTrabalhado, #DataInicioAvisoIndenizado").val("");
 
 	} else if (tipo == "1" || tipo == "8" || tipo == "T") { // Justa Causa (1), Falecimento (8), Termino de Contrato (T)
 		console.log("Regra 1, 8 ou T: Sem Aviso");
@@ -771,60 +852,60 @@ function formatarDataISO(dataISO) {
 }
 
 function preencheMotivoAutomatico(codigoMotivo) {
-    
-    // 1. Se o código for nulo (como no caso "Outros" ou "Selecione..."),
-    // limpa os campos e habilita o botão de zoom.
-    if (codigoMotivo == null || codigoMotivo == "") {
-        $("#CodMtDesl").val("");
-        $("#MotiDesligamento").val("");
-        $("#addMtDesl").prop("disabled", false); // Habilita o botão
-        return;
-    }
 
-    try {
-        // 2. Busca o dataset INTEIRO, sem filtros.
-        var dataset = DatasetFactory.getDataset("DS_FLUIG_0032", null, null, null);
+	// 1. Se o código for nulo (como no caso "Outros" ou "Selecione..."),
+	// limpa os campos e habilita o botão de zoom.
+	if (codigoMotivo == null || codigoMotivo == "") {
+		$("#CodMtDesl").val("");
+		$("#MotiDesligamento").val("");
+		$("#addMtDesl").prop("disabled", false); // Habilita o botão
+		return;
+	}
 
-        if (dataset == null || dataset.values.length == 0) {
-            throw new Error("O dataset DS_FLUIG_0032 está vazio ou não foi encontrado.");
-        }
+	try {
+		// 2. Busca o dataset INTEIRO, sem filtros.
+		var dataset = DatasetFactory.getDataset("DS_FLUIG_0032", null, null, null);
 
-        // 3. Filtra o dataset manualmente em JavaScript
-        var descricao = "";
-        var encontrado = false;
-        
-        for (var i = 0; i < dataset.values.length; i++) {
-            var row = dataset.values[i];
-            
-            // --- CORREÇÃO APLICADA ---
-            // 1. Corrigido para "CODCLIENTE"
-            // 2. Convertido para String para garantir a comparação
-            var codigoDataset = String(row["CODCLIENTE"]).trim(); 
-            
-            // 3. Lógica de "codigoPad" removida. A comparação agora é exata.
-            if (codigoDataset == codigoMotivo) {
-                descricao = row["DESCRICAO"]; 
-                encontrado = true;
-                break; // Para o loop assim que encontrar
-            }
-        }
+		if (dataset == null || dataset.values.length == 0) {
+			throw new Error("O dataset DS_FLUIG_0032 está vazio ou não foi encontrado.");
+		}
 
-        if (encontrado) {
-            // 4. Preenche os campos se encontrou
-            $("#CodMtDesl").val(codigoMotivo); 
-            $("#MotiDesligamento").val(descricao);
-            $("#addMtDesl").prop("disabled", true); // Desabilita o botão
-        } else {
-            // 5. Se não encontrou no loop, avisa o usuário
-            console.warn("Não foi possível encontrar a descrição para o Motivo de Desligamento com código: " + codigoMotivo);
-            $("#CodMtDesl").val("");
-            $("#MotiDesligamento").val("Código não encontrado. Selecione manualmente.");
-            $("#addMtDesl").prop("disabled", false);
-        }
-    } catch (e) {
-        console.error("Erro ao buscar motivo automático: " + e);
-        $("#CodMtDesl").val("");
-        $("#MotiDesligamento").val("Erro no dataset. Selecione manualmente.");
-        $("#addMtDesl").prop("disabled", false);
-    }
+		// 3. Filtra o dataset manualmente em JavaScript
+		var descricao = "";
+		var encontrado = false;
+
+		for (var i = 0; i < dataset.values.length; i++) {
+			var row = dataset.values[i];
+
+			// --- CORREÇÃO APLICADA ---
+			// 1. Corrigido para "CODCLIENTE"
+			// 2. Convertido para String para garantir a comparação
+			var codigoDataset = String(row["CODCLIENTE"]).trim();
+
+			// 3. Lógica de "codigoPad" removida. A comparação agora é exata.
+			if (codigoDataset == codigoMotivo) {
+				descricao = row["DESCRICAO"];
+				encontrado = true;
+				break; // Para o loop assim que encontrar
+			}
+		}
+
+		if (encontrado) {
+			// 4. Preenche os campos se encontrou
+			$("#CodMtDesl").val(codigoMotivo);
+			$("#MotiDesligamento").val(descricao);
+			$("#addMtDesl").prop("disabled", true); // Desabilita o botão
+		} else {
+			// 5. Se não encontrou no loop, avisa o usuário
+			console.warn("Não foi possível encontrar a descrição para o Motivo de Desligamento com código: " + codigoMotivo);
+			$("#CodMtDesl").val("");
+			$("#MotiDesligamento").val("Código não encontrado. Selecione manualmente.");
+			$("#addMtDesl").prop("disabled", false);
+		}
+	} catch (e) {
+		console.error("Erro ao buscar motivo automático: " + e);
+		$("#CodMtDesl").val("");
+		$("#MotiDesligamento").val("Erro no dataset. Selecione manualmente.");
+		$("#addMtDesl").prop("disabled", false);
+	}
 }

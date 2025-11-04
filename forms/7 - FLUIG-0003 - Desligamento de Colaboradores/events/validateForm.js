@@ -127,18 +127,27 @@ function validateForm(form) {
 
             }
 
-            // Valida os novos campos de Aviso Indenizado
+            // Valida os novos campos de Aviso (Indenizado ou Trabalhado)
             if (tipoDesligamentoSelect == "2" || tipoDesligamentoSelect == "V") {
-                  validaVazio('DataInicioAvisoIndenizado', 'O campo Data de Início do Aviso Indenizado é obrigatório.');
-                  validaVazio('DiasAvisoIndenizado', 'O campo Dias de Aviso Indenizado é obrigatório.');
+
+                  // Verifica se a flag "Tem Aviso Prévio Indenizado" está marcada
+                  if (form.getValue("TemAvisoPrevioIndenizado") == "on") {
+                        // Valida campos Indenizados
+                        validaVazio('DataInicioAvisoIndenizado', 'O campo Data de Início do Aviso Indenizado é obrigatório.');
+                        validaVazio('DiasAvisoIndenizado', 'O campo Dias de Aviso Indenizado é obrigatório.');
+                  } else {
+                        // Valida campos Trabalhados
+                        validaVazio('DataInicioAvisoTrabalhado', 'O campo Data Início Aviso Trabalhado é obrigatório.');
+                        validaVazio('DiasAvisoTrabalhado', 'O campo Dias de Aviso Trabalhado é obrigatório.');
+                  }
             }
 
             // Valida Pedido de Demissão (4)
             if (tipoDesligamentoSelect == "4") {
                   // Verifica se o checkbox "DescontaAvisoPrevio" está marcado
                   if (form.getValue("DescontaAvisoPrevio") == "on") {
-                        // Valida o campo "DiasAvisoTrabalhado" que está no HTML original
-                        validaVazio('DiasAvisoTrabalhado', 'O campo "Dias de Aviso Trabalhado" é obrigatório pois "Desconta Aviso Prévio" está marcado.');
+                        // Valida o campo "DiasAvisoIndenizado"
+                        validaVazio('DiasAvisoIndenizado', 'O campo "Dias de Aviso Indenizado" é obrigatório pois "Desconta Aviso Prévio" está marcado.');
                   }
             }
 
