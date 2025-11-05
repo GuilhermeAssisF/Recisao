@@ -116,42 +116,47 @@ function validateForm(form) {
 
             var tipoDesligamentoSelect = form.getValue("cpTipoDesligamentoSelect");
 
-            // Valida o 'Tipo de Aviso' e 'Data de Aviso' originais APENAS se 'Outros' for selecionado
-            if (tipoDesligamentoSelect == "outros") {
+            // Só valida os campos de Aviso Prévio se a flag "Não se aplica" NÃO estiver marcada
+            if (form.getValue("chkNaoSeAplicaAviso") != "on") {
 
-                  validaVazio('TpAviso', 'O campo "Tipo de Aviso" é obrigatório quando "Outros" é selecionado.');
+                  // Valida o 'Tipo de Aviso' e 'Data de Aviso' originais APENAS se 'Outros' for selecionado
+                  if (tipoDesligamentoSelect == "outros") {
 
-                  if (form.getValue("TpAviso") != "5" && form.getValue("TpAviso") != "") {
-                        validaVazio('DataAviso', 'O campo "Data do Aviso" é obrigatório para este Tipo de Aviso.');
+                        validaVazio('TpAviso', 'O campo "Tipo de Aviso" é obrigatório quando "Outros" é selecionado.');
+
+                        if (form.getValue("TpAviso") != "5" && form.getValue("TpAviso") != "") {
+                              validaVazio('DataAviso', 'O campo "Data do Aviso" é obrigatório para este Tipo de Aviso.');
+                        }
+
                   }
 
-            }
+                  // Valida os novos campos de Aviso (Indenizado ou Trabalhado)
+                  if (tipoDesligamentoSelect == "2" || tipoDesligamentoSelect == "V") {
 
-            // Valida os novos campos de Aviso (Indenizado ou Trabalhado)
-            if (tipoDesligamentoSelect == "2" || tipoDesligamentoSelect == "V") {
-
-                  // Verifica se a flag "Tem Aviso Prévio Indenizado" está marcada
-                  if (form.getValue("TemAvisoPrevioIndenizado") == "on") {
-                        // Valida campos Indenizados
-                        validaVazio('DataInicioAvisoIndenizado', 'O campo Data de Início do Aviso Indenizado é obrigatório.');
-                        validaVazio('DiasAvisoIndenizado', 'O campo Dias de Aviso Indenizado é obrigatório.');
-                  } else {
-                        // Valida campos Trabalhados
-                        validaVazio('DataInicioAvisoTrabalhado', 'O campo Data Início Aviso Trabalhado é obrigatório.');
-                        validaVazio('DiasAvisoTrabalhado', 'O campo Dias de Aviso Trabalhado é obrigatório.');
+                        // Verifica se a flag "Tem Aviso Prévio Indenizado" está marcada
+                        if (form.getValue("TemAvisoPrevioIndenizado") == "on") {
+                              // Valida campos Indenizados
+                              validaVazio('DataInicioAvisoIndenizado', 'O campo Data de Início do Aviso Indenizado é obrigatório.');
+                              validaVazio('DiasAvisoIndenizado', 'O campo Dias de Aviso Indenizado é obrigatório.');
+                        } else {
+                              // Valida campos Trabalhados
+                              validaVazio('DataInicioAvisoTrabalhado', 'O campo Data Início Aviso Trabalhado é obrigatório.');
+                              validaVazio('DiasAvisoTrabalhado', 'O campo Dias de Aviso Trabalhado é obrigatório.');
+                        }
                   }
-            }
 
-            // Valida Pedido de Demissão (4)
-            if (tipoDesligamentoSelect == "4") {
-                  // Verifica se o checkbox "DescontaAvisoPrevio" está marcado
-                  if (form.getValue("DescontaAvisoPrevio") == "on") {
-                        // Valida o campo "DiasAvisoIndenizado"
-                        validaVazio('DiasAvisoIndenizado', 'O campo "Dias de Aviso Indenizado" é obrigatório pois "Desconta Aviso Prévio" está marcado.');
+                  // Valida Pedido de Demissão (4)
+                  if (tipoDesligamentoSelect == "4") {
+                        // Verifica se o checkbox "DescontaAvisoPrevio" está marcado
+                        if (form.getValue("DescontaAvisoPrevio") == "on") {
+                              // ALTERADO: Valida o campo "DiasAvisoIndenizado"
+                              validaVazio('DiasAvisoIndenizado', 'O campo "Dias de Aviso Indenizado" é obrigatório pois "Desconta Aviso Prévio" está marcado.');
+                        }
                   }
-            }
 
+            } // Fim do if (chkNaoSeAplicaAviso != "on")
       }
+
       if (atividade == 7 && (acaoUsuario == "true")) { //GESTOR IMEDIATO
 
             validaAprovacao('cpAprovacaoGestor', 'cpParecercol');
@@ -191,14 +196,6 @@ function validateForm(form) {
             throw Errors[0];
 
       }
-
-
-
-
-
-
-
-
 
 }
 

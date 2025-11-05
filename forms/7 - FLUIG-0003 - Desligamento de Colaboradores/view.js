@@ -233,6 +233,33 @@ $(document).ready(function () {
 		}
 	});
 
+	// Listener para o checkbox "Não se aplica"
+	$(document).on("change", "#chkNaoSeAplicaAviso", function () {
+		if ($(this).is(":checked")) {
+			// Oculta e reseta todos os campos de aviso
+			$("#divContainerCamposAviso").hide();
+
+			// 1. Reseta campos originais
+			$("#TpAviso").val("5"); // Define "Não se aplica"
+			$("#DataAviso").val("");
+			$("#addDataAviso button").prop("disabled", true);
+
+			// 2. Reseta campos dinâmicos
+			$("#TemAvisoPrevioIndenizado, #DescontaAvisoPrevio, #AvisoMisto").prop("checked", false);
+			$("#DataInicioAvisoIndenizado, #DiasAvisoIndenizado, #DataInicioAvisoTrabalhado, #DiasAvisoTrabalhado, #DiasAvisoProporcional").val("");
+
+			// 3. Oculta os blocos principais (embora o container pai já esteja oculto)
+			$("#divCamposAvisoOriginais").hide();
+			$("#linhaAvisoDinamica").hide();
+		} else {
+			// Exibe o container e re-avalia qual campo mostrar
+			$("#divContainerCamposAviso").show();
+			$("#TpAviso").val(""); // Limpa o "Não se aplica"
+			// Re-executa a lógica de exibição baseada no Tipo de Desligamento
+			gerenciarCamposPorTipoDesligamento($("#cpTipoDesligamentoSelect").val());
+		}
+	});
+
 });
 
 var criaDatepickers = function () {
@@ -685,17 +712,42 @@ var ESTABILIDADE = function () {
  * Gerencia a exibição e os valores dos campos de aviso 
  * com base no Tipo de Desligamento selecionado.
  */
+/**
+ * Gerencia a exibição e os valores dos campos de aviso 
+ * com base no Tipo de Desligamento selecionado.
+ * INCLUI LÓGICA DE REPOSICIONAMENTO DE LAYOUT.
+ */
 function gerenciarCamposPorTipoDesligamento(tipo) {
 	console.log("Gerenciando campos para o tipo: " + tipo);
 
-	// Garante que os campos estejam em suas colunas originais
-	$("#colAviso2, #colAviso3, #colAviso4").show(); // Garante que colunas ocultas reapareçam
+	// --- 1. RESET DE POSIÇÃO E VISIBILIDADE DE COLUNAS ---
+	// Garante que os campos estejam em suas colunas originais (HTML)
+	// Isso reverte qualquer mudança de layout feita pela opção "Pedido de Demissão"
+	$("#divDataInicioAvisoIndenizado").appendTo("#colAviso2");
+	$("#divDataInicioAvisoTrabalhado").appendTo("#colAviso2");
 	$("#divDiasAvisoIndenizado").appendTo("#colAviso3");
+	$("#divDiasAvisoTrabalhado").appendTo("#colAviso3");
 	$("#divAvisoProporcional").appendTo("#colAviso4");
 
-	// --- 1. Reseta/Oculta todos os blocos de aviso ---
+	// Garante que todas as colunas de aviso estejam visíveis
+	$("#colAviso2, #colAviso3, #colAviso4").show();
+	// --- FIM DO RESET ---
+
+
+	// --- 2. Reseta/Oculta todos os blocos de aviso ---
 	$("#divCamposAvisoOriginais").hide(); // Oculta o bloco de aviso original (para 'Outros')
 	$("#linhaAvisoDinamica").hide();      // Oculta a nova linha dinâmica inteira
+
+	// Se "Não se aplica" estiver marcado, interrompe a execução aqui
+	if ($("#chkNaoSeAplicaAviso").is(":checked")) {
+		console.log("Não se aplica está marcado, pulando gerenciamento de campos.");
+		$("#divContainerCamposAviso").hide(); // Garante que esteja oculto
+		$("#TpAviso").val("5"); // Define como "Não se aplica" para integração
+		return; // Sai da função
+	} else {
+		// Garante que o container esteja visível se "Não se aplica" não estiver marcado
+		$("#divContainerCamposAviso").show();
+	}
 
 	// Oculta todos os componentes individuais dentro da linha dinâmica
 	$("#divTemAvisoIndenizado, #divDescontaAviso, #divAvisoMisto").hide();
@@ -719,7 +771,7 @@ function gerenciarCamposPorTipoDesligamento(tipo) {
 	$("#addDataInicioAvisoIndenizado button, #addDataInicioAvisoTrabalhado button").prop("disabled", true);
 
 
-	// --- 2. Aplica as regras específicas ---
+	// --- 3. Aplica as regras específicas ---
 
 	if (tipo == "2" || tipo == "V") { // Demissão sem justa causa (2) ou Comum Acordo (V)
 		console.log("Regra 2 ou V: Aviso Indenizado (Inicial)");
@@ -729,7 +781,7 @@ function gerenciarCamposPorTipoDesligamento(tipo) {
 		// Mostra a linha dinâmica
 		$("#linhaAvisoDinamica").show();
 
-		// Mostra os campos de AVISO INDENIZADO por padrão
+		// Mostra os campos de AVISO INDENIZADO por padrão (Layout original de 4 colunas)
 		$("#divTemAvisoIndenizado").show();
 		$("#divDataInicioAvisoIndenizado").show();
 		$("#divDiasAvisoIndenizado").show();
@@ -739,10 +791,8 @@ function gerenciarCamposPorTipoDesligamento(tipo) {
 		$("#divDataInicioAvisoTrabalhado").hide();
 		$("#divDiasAvisoTrabalhado").hide();
 
-		// --- ALTERAÇÃO PRINCIPAL ---
 		// Marca o checkbox, mas agora permite a edição
 		$("#TemAvisoPrevioIndenizado").prop("checked", true).prop("disabled", false);
-		// --- FIM DA ALTERAÇÃO ---
 
 		// Define o default de 30 dias e habilita campos
 		$("#DiasAvisoIndenizado").val("30");
@@ -767,7 +817,7 @@ function gerenciarCamposPorTipoDesligamento(tipo) {
 
 		// Mostra os campos corretos para "Pedido de Demissão"
 		$("#divDescontaAviso").show();
-		$("#divDiasAvisoIndenizado").show();       // <-- ESTA LINHA EXIBE O CAMPO
+		$("#divDiasAvisoIndenizado").show();       // EXIBE "Dias de Aviso Indenizado" (agora na Col 2)
 		$("#divAvisoProporcional").show();         // EXIBE "Dias de Aviso Proporcional" (agora na Col 3)
 
 		// Oculta os campos que não serão usados
